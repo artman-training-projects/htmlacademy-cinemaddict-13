@@ -14,7 +14,7 @@ import {createMainFilmListCard} from "./view/main/films/main-film-list-card";
 // import {createPopupFormTop} from "./view/popup/popup-form-top";
 // import {createPopupFormBottom} from "./view/popup/popup-form-bottom";
 
-const ShowFilms = {
+const ShownFilms = {
   MAIN: 5,
   EXTRA: 2
 };
@@ -29,47 +29,46 @@ const RenderPosition = {
   BEFOREEND: `beforeend`,
 };
 
-const render = (container, template, place) => {
+const render = (container, template, place = RenderPosition.BEFOREEND) => {
   container.insertAdjacentHTML(place, template);
 };
 
-const renderFilms = (container, filmsCount) => {
+const renderFilms = (container, filmsAmount) => {
   const listContainer = container.querySelector(`.films-list__container`);
-  for (let i = 0; i < filmsCount; i++) {
-    render(listContainer, createMainFilmListCard(), RenderPosition.BEFOREEND);
+  for (let i = 0; i < filmsAmount; i++) {
+    render(listContainer, createMainFilmListCard());
   }
 };
 
-const renderList = (container, typeList, isMain, countFilms) => {
-  render(container, createMainFilmsList(typeList, isMain), RenderPosition.BEFOREEND);
-  const mainContainer = container.querySelector(`[data-list="${typeList}"]`);
+const renderList = (container, listType, filmsAmount, isMain = false) => {
+  render(container, createMainFilmsList(listType, isMain));
+  const mainContainer = container.querySelector(`[data-list="${listType}"]`);
 
-  render(mainContainer, createMainFilmListHeader(typeList, isMain), RenderPosition.BEFOREEND);
-  render(mainContainer, createMainFilmsListContainer(), RenderPosition.BEFOREEND);
+  render(mainContainer, createMainFilmListHeader(listType, isMain));
+  render(mainContainer, createMainFilmsListContainer());
   if (isMain) {
-    render(mainContainer, createMainFilmsListMore(), RenderPosition.BEFOREEND);
+    render(mainContainer, createMainFilmsListMore());
   }
-  renderFilms(mainContainer, countFilms);
+  renderFilms(mainContainer, filmsAmount);
 };
 
-const page = document.querySelector(`body`);
-const headerSection = page.querySelector(`.header`);
-const mainSection = page.querySelector(`.main`);
-const footerStatisticSection = page.querySelector(`.footer__statistics`);
+const headerSection = document.body.querySelector(`.header`);
+const mainSection = document.body.querySelector(`.main`);
+const footerStatisticSection = document.body.querySelector(`.footer__statistics`);
 
-render(headerSection, createHeaderProfile(), RenderPosition.BEFOREEND);
-render(mainSection, createMainNav(), RenderPosition.BEFOREEND);
-render(mainSection, createMainSort(), RenderPosition.BEFOREEND);
-render(mainSection, createMainFilms(), RenderPosition.BEFOREEND);
-render(footerStatisticSection, createFooterStatistic(), RenderPosition.BEFOREEND);
+render(headerSection, createHeaderProfile());
+render(mainSection, createMainNav());
+render(mainSection, createMainSort());
+render(mainSection, createMainFilms());
+render(footerStatisticSection, createFooterStatistic());
 
 const mainFilmsContainer = mainSection.querySelector(`.films`);
-renderList(mainFilmsContainer, List.MAIN, true, ShowFilms.MAIN);
-renderList(mainFilmsContainer, List.TOP_RATED, false, ShowFilms.EXTRA);
-renderList(mainFilmsContainer, List.MOST_COMMENTED, false, ShowFilms.EXTRA);
+renderList(mainFilmsContainer, List.MAIN, ShownFilms.MAIN, true);
+renderList(mainFilmsContainer, List.TOP_RATED, ShownFilms.EXTRA);
+renderList(mainFilmsContainer, List.MOST_COMMENTED, ShownFilms.EXTRA);
 
 // popup render
-// render(page, createPopupForm(), RenderPosition.BEFOREEND);
-// const popupFormContainer = page.querySelector(`.film-details__inner`);
-// render(popupFormContainer, createPopupFormTop(), RenderPosition.BEFOREEND);
-// render(popupFormContainer, createPopupFormBottom(), RenderPosition.BEFOREEND);
+// render(document.body, createPopupForm());
+// const popupFormContainer = document.body.querySelector(`.film-details__inner`);
+// render(popupFormContainer, createPopupFormTop());
+// render(popupFormContainer, createPopupFormBottom());

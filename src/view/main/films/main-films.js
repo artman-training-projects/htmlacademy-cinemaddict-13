@@ -1,7 +1,5 @@
 export const createMainFilms = () => {
   return (
-    `<section class="films">
-
-    </section>`
+    `<section class="films"></section>`
   );
 };
