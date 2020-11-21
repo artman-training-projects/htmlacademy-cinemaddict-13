@@ -10,9 +10,12 @@ import {createMainFilmsList} from "./view/main/films/main-film-list";
 import {createMainFilmsListMore} from "./view/main/films/main-film-list-more";
 import {createMainFilmsListContainer} from "./view/main/films/main-film-list-container";
 import {createMainFilmListCard} from "./view/main/films/main-film-list-card";
-// import {createPopupForm} from "./view/popup/popup-form";
-// import {createPopupFormTop} from "./view/popup/popup-form-top";
-// import {createPopupFormBottom} from "./view/popup/popup-form-bottom";
+import {createPopupForm} from "./view/popup/popup-form";
+import {createPopupFormTop} from "./view/popup/popup-form-top";
+import {createPopupFormBottom} from "./view/popup/popup-form-bottom";
+import {getRandomizedComment} from "./mock/comment";
+import {getRandomNumber} from "./utils";
+import {createPopupComment} from "./view/popup/popup-comment";
 
 const ShownFilms = {
   MAIN: 5,
@@ -28,6 +31,8 @@ const List = {
 const RenderPosition = {
   BEFOREEND: `beforeend`,
 };
+
+const comments = new Array(getRandomNumber(5, 1)).fill(``).map(getRandomizedComment);
 
 const render = (container, template, place = RenderPosition.BEFOREEND) => {
   container.insertAdjacentHTML(place, template);
@@ -68,7 +73,9 @@ renderList(mainFilmsContainer, List.TOP_RATED, ShownFilms.EXTRA);
 renderList(mainFilmsContainer, List.MOST_COMMENTED, ShownFilms.EXTRA);
 
 // popup render
-// render(document.body, createPopupForm());
-// const popupFormContainer = document.body.querySelector(`.film-details__inner`);
-// render(popupFormContainer, createPopupFormTop());
-// render(popupFormContainer, createPopupFormBottom());
+render(document.body, createPopupForm());
+const popupFormContainer = document.body.querySelector(`.film-details__inner`);
+render(popupFormContainer, createPopupFormTop());
+render(popupFormContainer, createPopupFormBottom());
+const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
+render(popupCommentList, createPopupComment(comments));
