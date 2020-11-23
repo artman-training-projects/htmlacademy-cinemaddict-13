@@ -13,12 +13,15 @@ import {createMainFilmListCard} from "./view/main/films/main-film-list-card";
 import {createPopupForm} from "./view/popup/popup-form";
 import {createPopupFormTop} from "./view/popup/popup-form-top";
 import {createPopupFormBottom} from "./view/popup/popup-form-bottom";
-import {getRandomizedComment} from "./mock/comment";
-import {getRandomNumber} from "./utils";
 import {createPopupComment} from "./view/popup/popup-comment";
-import {List, RenderPosition, ShownFilms} from "./consts";
 
-const comments = new Array(getRandomNumber(5, 1)).fill(``).map(getRandomizedComment);
+import {List, RenderPosition, ShownFilms} from "./consts";
+import {getRandomNumber} from "./utils";
+import {getRandomizedFilm} from "./mock/films";
+
+const films = new Array(getRandomNumber(20, 15)).fill(``).map(getRandomizedFilm);
+const filmsTopRated = films.sort((a, b) => a.rating < b.rating).slice(0, 2);
+const filmsMostCommented = films.sort((a, b) => a.comments.length < b.comments.length).slice(0, 2);
 
 const render = (container, template, place = RenderPosition.BEFOREEND) => {
   container.insertAdjacentHTML(place, template);
@@ -59,9 +62,9 @@ renderList(mainFilmsContainer, List.TOP_RATED, ShownFilms.EXTRA);
 renderList(mainFilmsContainer, List.MOST_COMMENTED, ShownFilms.EXTRA);
 
 // popup render
-// render(document.body, createPopupForm());
-// const popupFormContainer = document.body.querySelector(`.film-details__inner`);
-// render(popupFormContainer, createPopupFormTop());
-// render(popupFormContainer, createPopupFormBottom());
-// const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
-// render(popupCommentList, createPopupComment(comments));
+render(document.body, createPopupForm());
+const popupFormContainer = document.body.querySelector(`.film-details__inner`);
+render(popupFormContainer, createPopupFormTop(films[0]));
+render(popupFormContainer, createPopupFormBottom(films[0].comments));
+const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
+render(popupCommentList, createPopupComment(films[0].comments));
