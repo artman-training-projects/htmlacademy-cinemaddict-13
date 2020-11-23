@@ -2,8 +2,8 @@ import {createHeaderProfile} from "./view/header/header-profile";
 import {createMainNav} from "./view/main/controls/main-nav";
 import {createMainSort} from "./view/main/controls/main-sort";
 import {createFooterStatistic} from "./view/footer/footer-statistic";
-// import {createMainStatistic} from './view/main/controls/main-statistic';
-// import {createMainFilmsLoading} from "./view/main/films/main-films-loading";
+import {createMainStatistic} from './view/main/controls/main-statistic';
+import {createMainFilmsLoading} from "./view/main/films/main-films-loading";
 import {createMainFilms} from "./view/main/films/main-films";
 import {createMainFilmListHeader} from "./view/main/films/main-film-list-header";
 import {createMainFilmsList} from "./view/main/films/main-film-list";
@@ -16,21 +16,7 @@ import {createPopupFormBottom} from "./view/popup/popup-form-bottom";
 import {getRandomizedComment} from "./mock/comment";
 import {getRandomNumber} from "./utils";
 import {createPopupComment} from "./view/popup/popup-comment";
-
-const ShownFilms = {
-  MAIN: 5,
-  EXTRA: 2
-};
-
-const List = {
-  MAIN: `All movies. Upcoming`,
-  TOP_RATED: `Top rated`,
-  MOST_COMMENTED: `Most commented`
-};
-
-const RenderPosition = {
-  BEFOREEND: `beforeend`,
-};
+import {List, RenderPosition, ShownFilms} from "./consts";
 
 const comments = new Array(getRandomNumber(5, 1)).fill(``).map(getRandomizedComment);
 
@@ -73,9 +59,9 @@ renderList(mainFilmsContainer, List.TOP_RATED, ShownFilms.EXTRA);
 renderList(mainFilmsContainer, List.MOST_COMMENTED, ShownFilms.EXTRA);
 
 // popup render
-render(document.body, createPopupForm());
-const popupFormContainer = document.body.querySelector(`.film-details__inner`);
-render(popupFormContainer, createPopupFormTop());
-render(popupFormContainer, createPopupFormBottom());
-const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
-render(popupCommentList, createPopupComment(comments));
+// render(document.body, createPopupForm());
+// const popupFormContainer = document.body.querySelector(`.film-details__inner`);
+// render(popupFormContainer, createPopupFormTop());
+// render(popupFormContainer, createPopupFormBottom());
+// const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
+// render(popupCommentList, createPopupComment(comments));
