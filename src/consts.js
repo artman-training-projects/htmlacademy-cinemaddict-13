@@ -1,3 +1,7 @@
+export const RenderPosition = {
+  BEFOREEND: `beforeend`,
+};
+
 export const ShownFilms = {
   MAIN: 5,
   EXTRA: 2
@@ -9,6 +13,9 @@ export const List = {
   MOST_COMMENTED: `Most commented`
 };
 
-export const RenderPosition = {
-  BEFOREEND: `beforeend`,
+export const Nav = {
+  ALL: `All movies`,
+  WATCHLIST: `Watchlist`,
+  HISTORY: `History`,
+  FAVORITES: `Favorites`,
 };

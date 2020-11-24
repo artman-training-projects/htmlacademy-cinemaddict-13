@@ -1,3 +1,5 @@
+import {Nav} from "./consts";
+
 export function getRandomNumber(max, min = 0) {
   let rand = min + Math.random() * (max + 1 - min);
   return Math.floor(rand);
@@ -20,3 +22,10 @@ export function getFormattedRunTime(minutes) {
 
   return time.join(` `);
 }
+
+export const getFilteredFilms = (films) => ({
+  [Nav.ALL]: films,
+  [Nav.WATCHLIST]: films.filter((film) => film.watchlist),
+  [Nav.HISTORY]: films.filter((film) => film.watched),
+  [Nav.FAVORITES]: films.filter((film) => film.favorite),
+});
