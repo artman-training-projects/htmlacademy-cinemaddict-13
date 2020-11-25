@@ -20,8 +20,8 @@ import {getFilteredFilms, getRandomNumber} from "./utils";
 import {getRandomizedFilm} from "./mock/films";
 
 const films = new Array(getRandomNumber(20, 15)).fill(``).map(getRandomizedFilm);
-const filmsTopRated = films.sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
-const filmsMostCommented = films.sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
+const filmsTopRated = [...films].sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
+const filmsMostCommented = [...films].sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
 const filteredFilms = getFilteredFilms(films);
 
 const render = (container, template, place = RenderPosition.BEFOREEND) => {

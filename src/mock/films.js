@@ -32,24 +32,24 @@ const filmActors = [`Morgan Freeman`, `Matilda De Angelis`, `Kevin Hart`, `Amand
 const filmCountry = [`Finland`, `USA`, `France`, `China`, `USSR`, `England`, `Germany`];
 
 export const getRandomizedFilm = () => {
-  const filmTitle = filmTitles[getRandomNumber(filmTitles.length - 1)];
+  const filmTitle = filmTitles[getRandomNumber(0, filmTitles.length - 1)];
 
   return {
     "id": nanoid(),
     "title": filmTitle,
     "titleOriginal": filmTitle,
     "poster": `images/posters/${filmTitle.toLocaleLowerCase().split(` `).join(`-`)}.jpg`,
-    "description": filmDescriptions[getRandomNumber(filmDescriptions.length - 1)],
-    "rating": getRandomNumber(10),
+    "description": filmDescriptions[getRandomNumber(0, filmDescriptions.length - 1)],
+    "rating": getRandomNumber(0, 9, true),
     "releaseDate": dayjs.past(100).format(),
-    "country": filmCountry[getRandomNumber(filmCountry.length - 1)],
-    "runtime": getRandomNumber(120, 30),
-    "comments": new Array(getRandomNumber(5)).fill(``).map(getRandomizedComment),
-    "director": filmDirectors[getRandomNumber(filmDirectors.length - 1)],
-    "writers": new Array(getRandomNumber(2, 1)).fill(``).map(() => filmWriters[getRandomNumber(filmWriters.length - 1)]),
-    "actors": new Array(getRandomNumber(4, 2)).fill(``).map(() => filmActors[getRandomNumber(filmActors.length - 1)]),
-    "genre": new Array(getRandomNumber(3, 1)).fill(``).map(() => filmGenres[getRandomNumber(filmGenres.length - 1)]),
-    "ageRating": getRandomNumber(18),
+    "country": filmCountry[getRandomNumber(0, filmCountry.length - 1)],
+    "runtime": getRandomNumber(30, 120),
+    "comments": new Array(getRandomNumber(0, 7)).fill(``).map(getRandomizedComment),
+    "director": filmDirectors[getRandomNumber(0, filmDirectors.length - 1)],
+    "writers": new Array(getRandomNumber(1, 2)).fill(``).map(() => filmWriters[getRandomNumber(1, filmWriters.length - 1)]),
+    "actors": new Array(getRandomNumber(2, 4)).fill(``).map(() => filmActors[getRandomNumber(1, filmActors.length - 1)]),
+    "genres": new Array(getRandomNumber(1, 3)).fill(``).map(() => filmGenres[getRandomNumber(1, filmGenres.length - 1)]),
+    "ageRating": getRandomNumber(0, 18),
     "watchlist": getTrueFalse(),
     "watched": getTrueFalse(),
     "favorite": getTrueFalse(),

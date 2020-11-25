@@ -1,8 +1,8 @@
 import {Nav} from "./consts";
 
-export function getRandomNumber(max, min = 0) {
-  let rand = min + Math.random() * (max + 1 - min);
-  return Math.floor(rand);
+export function getRandomNumber(min, max, isFraction = false) {
+  let randomNumber = min + Math.random() * (max + 1 - min);
+  return isFraction ? randomNumber.toFixed(1) : Math.floor(randomNumber);
 }
 
 export function getTrueFalse() {

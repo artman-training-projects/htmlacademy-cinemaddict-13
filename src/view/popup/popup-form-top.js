@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
+import {getFormattedRunTime} from "../../utils";
 
 export const createPopupFormTop = (film) => {
-  const isChecked = (bool) => bool && `checked`;
+  const getIsActive = (isChecked) => isChecked && `checked`;
 
   return (
     `<div class="film-details__top-container">
@@ -10,7 +11,7 @@ export const createPopupFormTop = (film) => {
       </div>
       <div class="film-details__info-wrap">
         <div class="film-details__poster">
-          <img class="film-details__poster-img" src="${film.poster}" alt="">
+          <img class="film-details__poster-img" src="${film.poster}" alt="${film.title}">
 
           <p class="film-details__age">${film.ageRating}+</p>
         </div>
@@ -46,7 +47,7 @@ export const createPopupFormTop = (film) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${film.runtime}</td>
+              <td class="film-details__cell">${getFormattedRunTime(film.runtime)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
@@ -55,7 +56,7 @@ export const createPopupFormTop = (film) => {
             <tr class="film-details__row">
               <td class="film-details__term">Genres</td>
               <td class="film-details__cell">
-                ${film.genre.map((g) => `<span class="film-details__genre">${g}</span>`).join(``)}
+                ${film.genres.map((genre) => `<span class="film-details__genre">${genre}</span>`).join(``)}
               </td>
             </tr>
           </table>
@@ -65,13 +66,13 @@ export const createPopupFormTop = (film) => {
       </div>
 
       <section class="film-details__controls">
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${isChecked(film.watchlist)}>
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist" ${getIsActive(film.watchlist)}>
         <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${isChecked(film.watched)}>
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched" ${getIsActive(film.watched)}>
         <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
-        <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${isChecked(film.favorite)}>
+        <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite" ${getIsActive(film.favorite)}>
         <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
       </section>
     </div>`
