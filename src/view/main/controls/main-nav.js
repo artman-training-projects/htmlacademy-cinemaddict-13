@@ -1,6 +1,6 @@
 import {Nav} from "../../../consts";
 
-// TODO: filterMap, by Alex Khab
+// TODO: filterMap
 const generateFilter = (filter) => Object.entries(filter).map(([filterName, amountFilms]) => ({
   filter: filterName,
   amount: amountFilms,
