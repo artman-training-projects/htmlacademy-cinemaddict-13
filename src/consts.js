@@ -1,7 +1,3 @@
-export const RenderPosition = {
-  BEFOREEND: `beforeend`,
-};
-
 export const ShownFilms = {
   MAIN: 5,
   EXTRA: 2
