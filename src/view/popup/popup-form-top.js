@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import {getFormattedRunTime} from "../../utils";
 
 export const createPopupFormTop = (film) => {
-  const getIsActive = (isChecked) => isChecked && `checked`;
+  const getIsActive = (isChecked) => isChecked ? `checked` : ``;
 
   return (
     `<div class="film-details__top-container">

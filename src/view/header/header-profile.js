@@ -1,4 +1,6 @@
-export const createHeaderProfile = () => {
+import AbstractView from "../abstract";
+
+const createHeaderProfileTemplate = () => {
   return (
     `<section class="header__profile profile">
       <p class="profile__rating">Sci-Fighter</p>
@@ -6,3 +8,9 @@ export const createHeaderProfile = () => {
     </section>`
   );
 };
+
+export default class HeaderProfile extends AbstractView {
+  getTemplate() {
+    return createHeaderProfileTemplate();
+  }
+}

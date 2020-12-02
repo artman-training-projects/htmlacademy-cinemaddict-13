@@ -1,8 +1,8 @@
 import {createElement} from "../render";
 
-export default class Abstract {
+export default class AbstractView {
   constructor() {
-    if (new.target === Abstract) {
+    if (new.target === AbstractView) {
       throw new Error(`Нельзя создать Абстрактный класс, только экземпляр.`);
     }
 

@@ -4,7 +4,7 @@ import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
 
 export const createMainFilmListCard = (film) => {
   const showDescription = (description) => description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
-  const getIsActive = (isChecked) => isChecked && `film-card__controls-item--active`;
+  const getIsActive = (isChecked) => isChecked ? `film-card__controls-item--active` : ``;
 
   return (
     `<article class="film-card" data-film="${film.id}">
