@@ -1,25 +1,24 @@
-import HeaderProfile from "./view/header/header-profile";
-import MainSort from "./view/main/controls/main-sort";
-import MainFilms from "./view/main/films/main-films";
-import MainFilmsListContainer from "./view/main/films/main-film-list-container";
+import Profile from "./view/header/profile";
+import MainContainer from "./view/main/main-container";
+import FilmListContainer from "./view/main/films/film-list-container";
 import ShowMoreBtn from "./view/main/films/show-more-btn";
-// import MainStatistic from './view/main/controls/main-statistic';
-// import MainFilmsLoading from "./view/main/films/main-films-loading";
-
-import {createMainFilter, generateFilters} from "./view/main/controls/main-filter";
-import {createFooterStatistic} from "./view/footer/footer-statistic";
-import {createMainFilmListHeader} from "./view/main/films/main-film-list-header";
-import {createMainFilmsList} from "./view/main/films/main-film-list";
-import {createMainFilmListCard} from "./view/main/films/main-film-list-card";
-// import PopupForm from "./view/popup/popup-form";
-// import {createPopupFormTop} from "./view/popup/popup-form-top";
-// import {createPopupFormBottom} from "./view/popup/popup-form-bottom";
-// import {createPopupComment} from "./view/popup/popup-comment";
+import Stats from './view/nav/stats';
+import FilmsLoading from "./view/main/films-loading";
+import Sort from "./view/sort";
+import Filter, {generateFilters} from "./view/nav/filter";
+import FilmListHeader from "./view/main/films/film-list-header";
+import FilmList from "./view/main/films/film-list";
+import FilmCard from "./view/main/films/film-card";
+import Statistic from "./view/footer/statistic";
+import PopupForm from "./view/popup/popup-form";
+import PopupFormTop from "./view/popup/popup-form-top";
+import PopupFormBottom from "./view/popup/popup-form-bottom";
+import PopupComment from "./view/popup/popup-comment";
 
 import {List, ShownFilms} from "./consts";
 import {getRandomNumber} from "./utils";
 import {getRandomizedFilm} from "./mock/films";
-import {renderElement, renderTemplate} from "./render";
+import {renderElement} from "./render";
 
 // Get entry place in template
 const pageBodySection = document.body;
@@ -33,40 +32,39 @@ const filmsMostCommented = [...films].sort((a, b) => a.comments.length < b.comme
 const filters = generateFilters(films);
 
 const renderFilms = (container, films) => {
-  const template = films.map(createMainFilmListCard).join(``);
-  renderTemplate(container, template);
+  films.forEach((film) => renderElement(container, new FilmCard(film).getElement()));
 };
 
 const renderListContainer = (container, listType, isMain = false) => {
-  renderTemplate(container, createMainFilmsList(listType, isMain));
+  renderElement(container, new FilmList(listType, isMain).getElement());
 
   const mainContainer = container.querySelector(`[data-list="${listType}"]`);
-  renderTemplate(mainContainer, createMainFilmListHeader(listType, isMain));
-  renderElement(mainContainer, new MainFilmsListContainer().getElement());
+  renderElement(mainContainer, new FilmListHeader(listType, isMain).getElement());
+  renderElement(mainContainer, new FilmListContainer().getElement());
 
   return mainContainer.querySelector(`.films-list__container`);
 };
 
 // popup render
 // renderElement(pageBodySection, new PopupForm().getElement());
-// const popupFormContainer = document.body.querySelector(`.film-details__inner`);
-// renderTemplate(popupFormContainer, createPopupFormTop(films[0]));
-// renderTemplate(popupFormContainer, createPopupFormBottom(films[0].comments));
+// const popupFormContainer = pageBodySection.querySelector(`.film-details__inner`);
+// renderElement(popupFormContainer, new PopupFormTop(films[0]).getElement());
+// renderElement(popupFormContainer, new PopupFormBottom(films[0].comments).getElement());
 // const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
-// renderTemplate(popupCommentList, createPopupComment(films[0].comments));
+// renderElement(popupCommentList, new PopupComment(films[0].comments).getElement());
 
 
 /* Start App */
-renderElement(headerSection, new HeaderProfile().getElement());
-renderTemplate(mainSection, createMainFilter(filters));
-renderElement(mainSection, new MainSort().getElement());
-renderElement(mainSection, new MainFilms().getElement());
-renderTemplate(footerStatisticSection, createFooterStatistic(films.length));
+const mainContainer = new MainContainer();
+renderElement(headerSection, new Profile().getElement());
+renderElement(mainSection, new Filter(filters).getElement());
+renderElement(mainSection, new Sort().getElement());
+renderElement(footerStatisticSection, new Statistic(films.length).getElement());
+renderElement(mainSection, mainContainer.getElement());
 
-const mainFilmsContainer = mainSection.querySelector(`.films`);
-const mainListContainer = renderListContainer(mainFilmsContainer, List.MAIN, true);
-const topRatedListContainer = renderListContainer(mainFilmsContainer, List.TOP_RATED);
-const mostCommentedListContainer = renderListContainer(mainFilmsContainer, List.MOST_COMMENTED);
+const mainListContainer = renderListContainer(mainContainer.getElement(), List.MAIN, true);
+const topRatedListContainer = renderListContainer(mainContainer.getElement(), List.TOP_RATED);
+const mostCommentedListContainer = renderListContainer(mainContainer.getElement(), List.MOST_COMMENTED);
 
 renderFilms(mainListContainer, films.slice(0, ShownFilms.MAIN));
 renderFilms(topRatedListContainer, filmsTopRated);
@@ -74,7 +72,7 @@ renderFilms(mostCommentedListContainer, filmsMostCommented);
 
 // show-more btn
 renderElement(mainListContainer.parentNode, new ShowMoreBtn().getElement());
-const showMoreBtn = mainFilmsContainer.querySelector(`.films-list__show-more`);
+const showMoreBtn = mainContainer.getElement().querySelector(`.films-list__show-more`);
 showMoreBtn.addEventListener(`click`, () => {
   const countShownFilms = () => mainListContainer.querySelectorAll(`.film-card`).length;
   renderFilms(mainListContainer, films.slice(countShownFilms(), countShownFilms() + ShownFilms.MAIN));

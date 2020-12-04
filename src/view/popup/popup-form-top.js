@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
+import AbstractView from "../abstract";
 import {getFormattedRunTime} from "../../utils";
 
-export const createPopupFormTop = (film) => {
+const createPopupFormTopTemplate = (film) => {
   const getIsActive = (isChecked) => isChecked ? `checked` : ``;
 
   return (
@@ -78,3 +79,14 @@ export const createPopupFormTop = (film) => {
     </div>`
   );
 };
+
+export default class PopupFormTop extends AbstractView {
+  constructor(film) {
+    super();
+    this._film = film;
+  }
+
+  getTemplate() {
+    return createPopupFormTopTemplate(this._film);
+  }
+}

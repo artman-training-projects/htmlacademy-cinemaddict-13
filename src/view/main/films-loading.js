@@ -1,4 +1,4 @@
-import AbstractView from "../../abstract";
+import AbstractView from "../abstract";
 
 const createMainFilmsLoadingTemplate = () => {
   return (
@@ -6,7 +6,7 @@ const createMainFilmsLoadingTemplate = () => {
   );
 };
 
-export default class MainFilmsLoading extends AbstractView {
+export default class FilmsLoading extends AbstractView {
   getTemplate() {
     return createMainFilmsLoadingTemplate();
   }

@@ -1,4 +1,5 @@
-import {Filters} from "../../../consts";
+import AbstractView from "../abstract";
+import {Filters} from "../../consts";
 
 export const generateFilters = (films) => ({
   [Filters.ALL]: films.length,
@@ -13,12 +14,12 @@ const generateFilter = (filter) => Object.entries(filter).map(([filterName, amou
   amount: amountFilms,
 }));
 
-export const createMainFilter = (fl, active = Filters.ALL) => {
+const createMainFilterTemplate = (fl) => {
   const filters = generateFilter(fl);
 
   const generateLinks = (navs) => navs.map((nav) => (
     `<a href="#${nav.filter}"
-      class="main-navigation__item ${active === nav.filter ? `main-navigation__item--active` : ``}">
+      class="main-navigation__item ${nav.filter === Filters.ALL ? `main-navigation__item--active` : ``}">
       ${nav.filter} ${nav.filter === Filters.ALL ? `` : `<span class="main-navigation__item-count">${nav.amount}</span></a>`}`
   )).join(``);
 
@@ -31,3 +32,14 @@ export const createMainFilter = (fl, active = Filters.ALL) => {
     </nav>`
   );
 };
+
+export default class Filter extends AbstractView {
+  constructor(filters) {
+    super();
+    this._filters = filters;
+  }
+
+  getTemplate() {
+    return createMainFilterTemplate(this._filters);
+  }
+}

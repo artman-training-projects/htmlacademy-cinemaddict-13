@@ -1,4 +1,6 @@
-export const createPopupFormBottom = (comments) => {
+import AbstractView from "../abstract";
+
+const createPopupFormBottomTemplate = (comments) => {
   return (
     `<div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
@@ -39,3 +41,14 @@ export const createPopupFormBottom = (comments) => {
     </div>`
   );
 };
+
+export default class PopupFormBottom extends AbstractView {
+  constructor(comments) {
+    super();
+    this._comments = comments;
+  }
+
+  getTemplate() {
+    return createPopupFormBottomTemplate(this._comments);
+  }
+}

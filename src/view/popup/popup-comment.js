@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
+import AbstractView from "../abstract";
 
-export const createPopupComment = (comments) => {
+const createPopupCommentTemplate = (comments) => {
   return comments.map((comment) => (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
@@ -17,3 +18,14 @@ export const createPopupComment = (comments) => {
     </li>`
   )).join(``);
 };
+
+export default class PopupComment extends AbstractView {
+  constructor(comments) {
+    super();
+    this._comments = comments;
+  }
+
+  getTemplate() {
+    return createPopupCommentTemplate(this._comments);
+  }
+}

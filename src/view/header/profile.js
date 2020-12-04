@@ -9,7 +9,7 @@ const createHeaderProfileTemplate = () => {
   );
 };
 
-export default class HeaderProfile extends AbstractView {
+export default class Profile extends AbstractView {
   getTemplate() {
     return createHeaderProfileTemplate();
   }

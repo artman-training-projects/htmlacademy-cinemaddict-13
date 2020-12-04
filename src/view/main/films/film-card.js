@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
 import {getFormattedRunTime} from "../../../utils";
 import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
+import AbstractView from "../../abstract";
 
-export const createMainFilmListCard = (film) => {
+const createFilmCardTemplate = (film) => {
   const showDescription = (description) => description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
   const getIsActive = (isChecked) => isChecked ? `film-card__controls-item--active` : ``;
 
@@ -26,3 +27,14 @@ export const createMainFilmListCard = (film) => {
     </article>`
   );
 };
+
+export default class FilmCard extends AbstractView {
+  constructor(film) {
+    super();
+    this._film = film;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._film);
+  }
+}
