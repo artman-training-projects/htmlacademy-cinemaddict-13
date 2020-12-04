@@ -3,21 +3,21 @@ import MainSort from "./view/main/controls/main-sort";
 import MainFilms from "./view/main/films/main-films";
 import MainFilmsListContainer from "./view/main/films/main-film-list-container";
 import ShowMoreBtn from "./view/main/films/show-more-btn";
-import MainStatistic from './view/main/controls/main-statistic';
-import MainFilmsLoading from "./view/main/films/main-films-loading";
+// import MainStatistic from './view/main/controls/main-statistic';
+// import MainFilmsLoading from "./view/main/films/main-films-loading";
 
-import {createMainNav} from "./view/main/controls/main-nav";
+import {createMainFilter, generateFilters} from "./view/main/controls/main-filter";
 import {createFooterStatistic} from "./view/footer/footer-statistic";
 import {createMainFilmListHeader} from "./view/main/films/main-film-list-header";
 import {createMainFilmsList} from "./view/main/films/main-film-list";
 import {createMainFilmListCard} from "./view/main/films/main-film-list-card";
-import PopupForm from "./view/popup/popup-form";
-import {createPopupFormTop} from "./view/popup/popup-form-top";
-import {createPopupFormBottom} from "./view/popup/popup-form-bottom";
-import {createPopupComment} from "./view/popup/popup-comment";
+// import PopupForm from "./view/popup/popup-form";
+// import {createPopupFormTop} from "./view/popup/popup-form-top";
+// import {createPopupFormBottom} from "./view/popup/popup-form-bottom";
+// import {createPopupComment} from "./view/popup/popup-comment";
 
 import {List, ShownFilms} from "./consts";
-import {getFilteredFilms, getRandomNumber} from "./utils";
+import {getRandomNumber} from "./utils";
 import {getRandomizedFilm} from "./mock/films";
 import {renderElement, renderTemplate} from "./render";
 
@@ -30,7 +30,7 @@ const footerStatisticSection = pageBodySection.querySelector(`.footer__statistic
 const films = new Array(getRandomNumber(20, 15)).fill(``).map(getRandomizedFilm);
 const filmsTopRated = [...films].sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
 const filmsMostCommented = [...films].sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
-const filteredFilms = getFilteredFilms(films);
+const filters = generateFilters(films);
 
 const renderFilms = (container, films) => {
   const template = films.map(createMainFilmListCard).join(``);
@@ -58,7 +58,7 @@ const renderListContainer = (container, listType, isMain = false) => {
 
 /* Start App */
 renderElement(headerSection, new HeaderProfile().getElement());
-renderTemplate(mainSection, createMainNav(filteredFilms));
+renderTemplate(mainSection, createMainFilter(filters));
 renderElement(mainSection, new MainSort().getElement());
 renderElement(mainSection, new MainFilms().getElement());
 renderTemplate(footerStatisticSection, createFooterStatistic(films.length));

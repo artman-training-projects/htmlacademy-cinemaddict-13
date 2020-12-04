@@ -9,7 +9,7 @@ export const List = {
   MOST_COMMENTED: `Most commented`
 };
 
-export const Nav = {
+export const Filters = {
   ALL: `All movies`,
   WATCHLIST: `Watchlist`,
   HISTORY: `History`,
