@@ -2,6 +2,11 @@ import dayjs from "dayjs";
 import {getFormattedRunTime} from "../../../utils";
 import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
 import AbstractView from "../../abstractView";
+import {renderComponent} from "../../../render";
+import PopupForm from "../../popup/popup-form";
+import PopupFormTop from "../../popup/popup-form-top";
+import PopupFormBottom from "../../popup/popup-form-bottom";
+import PopupComment from "../../popup/popup-comment";
 
 const createFilmCardTemplate = (film) => {
   const showDescription = (description) => description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
@@ -32,9 +37,63 @@ export default class FilmCard extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
+    this._popup = null;
+    this._body = document.body;
+    this._openPopup = this._openPopup.bind(this);
+    this._closePopup = this._closePopup.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._film);
+  }
+
+  setShowPopupHandler() {
+    this.getElement().querySelector(`.film-card__title`)
+      .addEventListener(`click`, this._openPopup);
+
+    this.getElement().querySelector(`.film-card__poster`)
+      .addEventListener(`click`, this._openPopup);
+
+    this.getElement().querySelector(`.film-card__comments`)
+      .addEventListener(`click`, this._openPopup);
+  }
+
+  _openPopup() {
+    this._removeOldPopup();
+
+    document.body.classList.add(`hide-overflow`);
+    this._popup = new PopupForm().getElement();
+    renderComponent(this._body, this._popup);
+
+    const popupFormContainer = this._popup.querySelector(`.film-details__inner`);
+    renderComponent(popupFormContainer, new PopupFormTop(this._film));
+    renderComponent(popupFormContainer, new PopupFormBottom(this._film.comments));
+
+    const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
+    renderComponent(popupCommentList, new PopupComment(this._film.comments));
+
+    const closeBtn = this._popup.querySelector(`.film-details__close-btn`);
+
+    document.addEventListener(`keydown`, this._closePopup);
+    closeBtn.addEventListener(`click`, () => {
+      this._popup.remove();
+      document.removeEventListener(`keydown`, this._closePopup);
+      document.body.classList.remove(`hide-overflow`);
+    });
+  }
+
+  _closePopup(evt) {
+    if (evt.key === `Escape`) {
+      this._popup.remove();
+      document.removeEventListener(`keydown`, this._closePopup);
+      document.body.classList.remove(`hide-overflow`);
+    }
+  }
+
+  _removeOldPopup() {
+    const oldPopup = document.querySelector(`.film-details`);
+    if (oldPopup) {
+      oldPopup.remove();
+    }
   }
 }

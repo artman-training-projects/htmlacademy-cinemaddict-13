@@ -11,10 +11,6 @@ import FilmListHeader from "./view/main/films/film-list-header";
 import FilmList from "./view/main/films/film-list";
 import FilmCard from "./view/main/films/film-card";
 import Statistic from "./view/footer/statistic";
-import PopupForm from "./view/popup/popup-form";
-import PopupFormTop from "./view/popup/popup-form-top";
-import PopupFormBottom from "./view/popup/popup-form-bottom";
-import PopupComment from "./view/popup/popup-comment";
 import FilmsLoading from "./view/main/films-loading";
 import NoFilms from "./view/main/no-films";
 import {getFilmsFromServer} from "./api/api";
@@ -24,34 +20,6 @@ const pageBodySection = document.body;
 const headerSection = pageBodySection.querySelector(`.header`);
 const mainSection = pageBodySection.querySelector(`.main`);
 const footerStatisticSection = pageBodySection.querySelector(`.footer__statistics`);
-
-// popup render
-const showPopup = (film) => {
-  document.body.classList.toggle(`hide-overflow`);
-  const popupForm = new PopupForm().getElement();
-  renderComponent(pageBodySection, popupForm);
-  const popupFormContainer = popupForm.querySelector(`.film-details__inner`);
-  renderComponent(popupFormContainer, new PopupFormTop(film));
-  renderComponent(popupFormContainer, new PopupFormBottom(film.comments));
-  const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
-  renderComponent(popupCommentList, new PopupComment(film.comments));
-
-  const closeBtn = popupForm.querySelector(`.film-details__close-btn`);
-  const closePopup = (evt) => {
-    if (evt.key === `Escape`) {
-      popupForm.remove();
-      document.removeEventListener(`keydown`, closePopup);
-      document.body.classList.toggle(`hide-overflow`);
-    }
-  };
-
-  document.addEventListener(`keydown`, closePopup);
-  closeBtn.addEventListener(`click`, () => {
-    popupForm.remove();
-    document.removeEventListener(`keydown`, closePopup);
-    document.body.classList.toggle(`hide-overflow`);
-  });
-};
 
 // container for films
 const renderListContainer = (container, listType, isMain = false) => {
@@ -68,8 +36,8 @@ const renderListContainer = (container, listType, isMain = false) => {
 const renderFilms = (container, films) => {
   films.forEach((film) => {
     const filmCard = new FilmCard(film);
-    filmCard.getElement().addEventListener(`click`, () => showPopup(film));
     renderComponent(container, filmCard);
+    filmCard.setShowPopupHandler();
   });
 };
 
