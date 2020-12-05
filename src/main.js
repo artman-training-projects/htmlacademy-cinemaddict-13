@@ -1,9 +1,10 @@
+import {List, ShownFilms} from "./consts";
+import {removeComponent, renderComponent, replaceElement} from "./render";
 import Profile from "./view/header/profile";
 import MainContainer from "./view/main/main-container";
 import FilmListContainer from "./view/main/films/film-list-container";
 import ShowMoreBtn from "./view/main/films/show-more-btn";
-import Stats from './view/nav/stats';
-import FilmsLoading from "./view/main/films-loading";
+// import Stats from './view/nav/stats';
 import Sort from "./view/sort";
 import Filter, {generateFilters} from "./view/nav/filter";
 import FilmListHeader from "./view/main/films/film-list-header";
@@ -14,11 +15,9 @@ import PopupForm from "./view/popup/popup-form";
 import PopupFormTop from "./view/popup/popup-form-top";
 import PopupFormBottom from "./view/popup/popup-form-bottom";
 import PopupComment from "./view/popup/popup-comment";
-
-import {List, ShownFilms} from "./consts";
-import {getRandomNumber} from "./utils";
-import {getRandomizedFilm} from "./mock/films";
-import {renderElement} from "./render";
+import FilmsLoading from "./view/main/films-loading";
+import NoFilms from "./view/main/no-films";
+import {getFilmsFromServer} from "./api/api";
 
 // Get entry place in template
 const pageBodySection = document.body;
@@ -26,21 +25,16 @@ const headerSection = pageBodySection.querySelector(`.header`);
 const mainSection = pageBodySection.querySelector(`.main`);
 const footerStatisticSection = pageBodySection.querySelector(`.footer__statistics`);
 
-const films = new Array(getRandomNumber(20, 15)).fill(``).map(getRandomizedFilm);
-const filmsTopRated = [...films].sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
-const filmsMostCommented = [...films].sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
-const filters = generateFilters(films);
-
 // popup render
 const showPopup = (film) => {
   document.body.classList.toggle(`hide-overflow`);
   const popupForm = new PopupForm().getElement();
-  renderElement(pageBodySection, popupForm);
+  renderComponent(pageBodySection, popupForm);
   const popupFormContainer = popupForm.querySelector(`.film-details__inner`);
-  renderElement(popupFormContainer, new PopupFormTop(film));
-  renderElement(popupFormContainer, new PopupFormBottom(film.comments));
+  renderComponent(popupFormContainer, new PopupFormTop(film));
+  renderComponent(popupFormContainer, new PopupFormBottom(film.comments));
   const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
-  renderElement(popupCommentList, new PopupComment(film.comments));
+  renderComponent(popupCommentList, new PopupComment(film.comments));
 
   const closeBtn = popupForm.querySelector(`.film-details__close-btn`);
   const closePopup = (evt) => {
@@ -55,16 +49,17 @@ const showPopup = (film) => {
   closeBtn.addEventListener(`click`, () => {
     popupForm.remove();
     document.removeEventListener(`keydown`, closePopup);
+    document.body.classList.toggle(`hide-overflow`);
   });
 };
 
 // container for films
 const renderListContainer = (container, listType, isMain = false) => {
-  renderElement(container, new FilmList(listType, isMain));
+  renderComponent(container, new FilmList(listType, isMain));
 
   const mainContainer = container.querySelector(`[data-list="${listType}"]`);
-  renderElement(mainContainer, new FilmListHeader(listType, isMain));
-  renderElement(mainContainer, new FilmListContainer());
+  renderComponent(mainContainer, new FilmListHeader(listType, isMain));
+  renderComponent(mainContainer, new FilmListContainer());
 
   return mainContainer.querySelector(`.films-list__container`);
 };
@@ -74,34 +69,64 @@ const renderFilms = (container, films) => {
   films.forEach((film) => {
     const filmCard = new FilmCard(film);
     filmCard.getElement().addEventListener(`click`, () => showPopup(film));
-    renderElement(container, filmCard);
+    renderComponent(container, filmCard);
   });
 };
 
-
-/* Start App */
-const mainContainer = new MainContainer();
-renderElement(headerSection, new Profile());
-renderElement(mainSection, new Filter(filters));
-renderElement(mainSection, new Sort());
-renderElement(footerStatisticSection, new Statistic(films.length));
-renderElement(mainSection, mainContainer);
-
-const mainListContainer = renderListContainer(mainContainer.getElement(), List.MAIN, true);
-const topRatedListContainer = renderListContainer(mainContainer.getElement(), List.TOP_RATED);
-const mostCommentedListContainer = renderListContainer(mainContainer.getElement(), List.MOST_COMMENTED);
-
-renderFilms(mainListContainer, films.slice(0, ShownFilms.MAIN));
-renderFilms(topRatedListContainer, filmsTopRated);
-renderFilms(mostCommentedListContainer, filmsMostCommented);
-
 // show-more btn
-renderElement(mainListContainer.parentNode, new ShowMoreBtn());
-const showMoreBtn = mainContainer.getElement().querySelector(`.films-list__show-more`);
-showMoreBtn.addEventListener(`click`, () => {
-  const countShownFilms = () => mainListContainer.querySelectorAll(`.film-card`).length;
-  renderFilms(mainListContainer, films.slice(countShownFilms(), countShownFilms() + ShownFilms.MAIN));
-  (() => films.length === countShownFilms() && showMoreBtn.remove())();
-});
+const addShowMoreBtn = (listContainer, films) => {
+  if (films.length > 5) {
+    renderComponent(listContainer.parentNode, new ShowMoreBtn());
+    const showMoreBtn = mainComponent.getElement().querySelector(`.films-list__show-more`);
+    showMoreBtn.addEventListener(`click`, () => {
+      const countShownFilms = () => listContainer.querySelectorAll(`.film-card`).length;
+      renderFilms(listContainer, films.slice(countShownFilms(), countShownFilms() + ShownFilms.MAIN));
+      (() => films.length === countShownFilms() && showMoreBtn.remove())();
+    });
+  }
+};
 
+// Start App
+const profilreComponent = new Profile();
+const filterComponent = new Filter();
+const mainComponent = new MainContainer();
+const statisticComponent = new Statistic(0);
+const loadingComponent = new FilmsLoading();
 
+const startApp = () => {
+  renderComponent(mainSection, filterComponent);
+  renderComponent(mainSection, mainComponent);
+  renderComponent(footerStatisticSection, statisticComponent);
+  renderComponent(mainComponent, loadingComponent);
+
+  getFilmsFromServer()
+    .then((films) => {
+      if (films.length) {
+        const topRatedFilms = [...films].sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
+        const mostCommentedFilms = [...films].sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
+        const filters = generateFilters(films);
+
+        removeComponent(loadingComponent);
+        renderComponent(headerSection, profilreComponent);
+        renderComponent(mainSection, new Sort());
+        replaceElement(filterComponent, new Filter(filters));
+        replaceElement(statisticComponent, new Statistic(films.length));
+
+        const mainListContainer = renderListContainer(mainComponent.getElement(), List.MAIN, true);
+        const topRatedListContainer = renderListContainer(mainComponent.getElement(), List.TOP_RATED);
+        const mostCommentedListContainer = renderListContainer(mainComponent.getElement(), List.MOST_COMMENTED);
+
+        renderFilms(mainListContainer, films.slice(0, ShownFilms.MAIN));
+        renderFilms(topRatedListContainer, topRatedFilms);
+        renderFilms(mostCommentedListContainer, mostCommentedFilms);
+
+        addShowMoreBtn(mainListContainer, films);
+      } else {
+        removeComponent(loadingComponent);
+        renderComponent(mainComponent, new NoFilms());
+      }
+    })
+    .catch((err) => replaceElement(loadingComponent, new FilmsLoading(err)));
+};
+
+startApp();

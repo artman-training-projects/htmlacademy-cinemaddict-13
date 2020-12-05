@@ -1,6 +1,13 @@
 import AbstractView from "../abstractView";
 import {Filters} from "../../consts";
 
+const initFilter = {
+  [Filters.ALL]: 0,
+  [Filters.WATCHLIST]: 0,
+  [Filters.HISTORY]: 0,
+  [Filters.FAVORITES]: 0,
+};
+
 export const generateFilters = (films) => ({
   [Filters.ALL]: films.length,
   [Filters.WATCHLIST]: films.filter((film) => film.watchlist).length,
@@ -34,7 +41,7 @@ const createMainFilterTemplate = (fl) => {
 };
 
 export default class Filter extends AbstractView {
-  constructor(filters) {
+  constructor(filters = initFilter) {
     super();
     this._filters = filters;
   }
