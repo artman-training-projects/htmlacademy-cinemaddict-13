@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import {getFormattedRunTime} from "../../../utils";
 import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
-import AbstractView from "../../abstract";
+import AbstractView from "../../abstractView";
 
 const createFilmCardTemplate = (film) => {
   const showDescription = (description) => description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;

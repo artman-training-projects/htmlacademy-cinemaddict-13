@@ -1,4 +1,4 @@
-import AbstractView from "../abstract";
+import AbstractView from "../abstractView";
 import {Filters} from "../../consts";
 
 export const generateFilters = (films) => ({

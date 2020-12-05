@@ -1,4 +1,4 @@
-import AbstractView from "./abstract";
+import AbstractView from "./abstractView";
 
 const createMainSortTemplate = () => {
   return (

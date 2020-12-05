@@ -31,36 +31,61 @@ const filmsTopRated = [...films].sort((a, b) => a.rating < b.rating).slice(0, Sh
 const filmsMostCommented = [...films].sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
 const filters = generateFilters(films);
 
-const renderFilms = (container, films) => {
-  films.forEach((film) => renderElement(container, new FilmCard(film).getElement()));
+// popup render
+const showPopup = (film) => {
+  document.body.classList.toggle(`hide-overflow`);
+  const popupForm = new PopupForm().getElement();
+  renderElement(pageBodySection, popupForm);
+  const popupFormContainer = popupForm.querySelector(`.film-details__inner`);
+  renderElement(popupFormContainer, new PopupFormTop(film));
+  renderElement(popupFormContainer, new PopupFormBottom(film.comments));
+  const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
+  renderElement(popupCommentList, new PopupComment(film.comments));
+
+  const closeBtn = popupForm.querySelector(`.film-details__close-btn`);
+  const closePopup = (evt) => {
+    if (evt.key === `Escape`) {
+      popupForm.remove();
+      document.removeEventListener(`keydown`, closePopup);
+      document.body.classList.toggle(`hide-overflow`);
+    }
+  };
+
+  document.addEventListener(`keydown`, closePopup);
+  closeBtn.addEventListener(`click`, () => {
+    popupForm.remove();
+    document.removeEventListener(`keydown`, closePopup);
+  });
 };
 
+// container for films
 const renderListContainer = (container, listType, isMain = false) => {
-  renderElement(container, new FilmList(listType, isMain).getElement());
+  renderElement(container, new FilmList(listType, isMain));
 
   const mainContainer = container.querySelector(`[data-list="${listType}"]`);
-  renderElement(mainContainer, new FilmListHeader(listType, isMain).getElement());
-  renderElement(mainContainer, new FilmListContainer().getElement());
+  renderElement(mainContainer, new FilmListHeader(listType, isMain));
+  renderElement(mainContainer, new FilmListContainer());
 
   return mainContainer.querySelector(`.films-list__container`);
 };
 
-// popup render
-// renderElement(pageBodySection, new PopupForm().getElement());
-// const popupFormContainer = pageBodySection.querySelector(`.film-details__inner`);
-// renderElement(popupFormContainer, new PopupFormTop(films[0]).getElement());
-// renderElement(popupFormContainer, new PopupFormBottom(films[0].comments).getElement());
-// const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
-// renderElement(popupCommentList, new PopupComment(films[0].comments).getElement());
+// render films
+const renderFilms = (container, films) => {
+  films.forEach((film) => {
+    const filmCard = new FilmCard(film);
+    filmCard.getElement().addEventListener(`click`, () => showPopup(film));
+    renderElement(container, filmCard);
+  });
+};
 
 
 /* Start App */
 const mainContainer = new MainContainer();
-renderElement(headerSection, new Profile().getElement());
-renderElement(mainSection, new Filter(filters).getElement());
-renderElement(mainSection, new Sort().getElement());
-renderElement(footerStatisticSection, new Statistic(films.length).getElement());
-renderElement(mainSection, mainContainer.getElement());
+renderElement(headerSection, new Profile());
+renderElement(mainSection, new Filter(filters));
+renderElement(mainSection, new Sort());
+renderElement(footerStatisticSection, new Statistic(films.length));
+renderElement(mainSection, mainContainer);
 
 const mainListContainer = renderListContainer(mainContainer.getElement(), List.MAIN, true);
 const topRatedListContainer = renderListContainer(mainContainer.getElement(), List.TOP_RATED);
@@ -71,7 +96,7 @@ renderFilms(topRatedListContainer, filmsTopRated);
 renderFilms(mostCommentedListContainer, filmsMostCommented);
 
 // show-more btn
-renderElement(mainListContainer.parentNode, new ShowMoreBtn().getElement());
+renderElement(mainListContainer.parentNode, new ShowMoreBtn());
 const showMoreBtn = mainContainer.getElement().querySelector(`.films-list__show-more`);
 showMoreBtn.addEventListener(`click`, () => {
   const countShownFilms = () => mainListContainer.querySelectorAll(`.film-card`).length;
