@@ -7,7 +7,7 @@ const createFooterStatisticTemplate = (filmAmount) => {
 };
 
 export default class Statistic extends AbstractView {
-  constructor(amount) {
+  constructor(amount = 0) {
     super();
     this._amount = amount;
   }

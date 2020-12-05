@@ -43,7 +43,7 @@ const renderFilms = (container, films) => {
 
 // show-more btn
 const addShowMoreBtn = (listContainer, films) => {
-  if (films.length > 5) {
+  if (films.length > ShownFilms.MAIN) {
     const showMoreBtn = new ShowMoreBtn();
     renderComponent(listContainer.parentNode, showMoreBtn);
     showMoreBtn.setShowMoreHandler(() => {
@@ -55,10 +55,9 @@ const addShowMoreBtn = (listContainer, films) => {
 };
 
 // Start App
-const profilreComponent = new Profile();
 const filterComponent = new Filter();
 const mainComponent = new MainContainer();
-const statisticComponent = new Statistic(0);
+const statisticComponent = new Statistic();
 const loadingComponent = new FilmsLoading();
 
 const startApp = () => {
@@ -73,6 +72,9 @@ const startApp = () => {
         const topRatedFilms = [...films].sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
         const mostCommentedFilms = [...films].sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
         const filters = generateFilters(films);
+
+        const watchedFilms = films.filter((film) => film.watched).length;
+        const profilreComponent = new Profile(watchedFilms);
 
         removeComponent(loadingComponent);
         renderComponent(headerSection, profilreComponent);

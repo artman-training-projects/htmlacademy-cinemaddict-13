@@ -2,8 +2,7 @@ import {getRandomizedFilm} from "../mock/films";
 import {getRandomNumber} from "../utils";
 
 const films = (() => {
-  // const random = Math.random();
-  const random = 1;
+  const random = Math.random();
 
   if (random > 0.5) {
     return new Array(getRandomNumber(20, 15)).fill(``).map(getRandomizedFilm);
@@ -17,5 +16,5 @@ const films = (() => {
 })();
 
 export const getFilmsFromServer = () => new Promise((resolve, reject) => {
-  setTimeout(() => films ? resolve(films) : reject(new Error(`Упс! Загрузка не удалась`)), 0);
+  setTimeout(() => films ? resolve(films) : reject(new Error(`Упс! Загрузка не удалась`)), 3000);
 });
