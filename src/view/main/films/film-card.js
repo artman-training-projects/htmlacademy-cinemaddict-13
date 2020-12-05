@@ -41,6 +41,7 @@ export default class FilmCard extends AbstractView {
     this._body = document.body;
     this._openPopup = this._openPopup.bind(this);
     this._closePopup = this._closePopup.bind(this);
+    this._closePopupOnEscHandler = this._closePopupOnEscHandler.bind(this);
   }
 
   getTemplate() {
@@ -59,9 +60,9 @@ export default class FilmCard extends AbstractView {
   }
 
   _openPopup() {
-    this._removeOldPopup();
+    this._removeOldPopup(this._popup);
 
-    document.body.classList.add(`hide-overflow`);
+    this._body.classList.add(`hide-overflow`);
     this._popup = new PopupForm().getElement();
     renderComponent(this._body, this._popup);
 
@@ -74,24 +75,24 @@ export default class FilmCard extends AbstractView {
 
     const closeBtn = this._popup.querySelector(`.film-details__close-btn`);
 
-    document.addEventListener(`keydown`, this._closePopup);
-    closeBtn.addEventListener(`click`, () => {
-      this._popup.remove();
-      document.removeEventListener(`keydown`, this._closePopup);
-      document.body.classList.remove(`hide-overflow`);
-    });
+    this._body.addEventListener(`keydown`, this._closePopupOnEscHandler);
+    closeBtn.addEventListener(`click`, this._closePopup);
   }
 
-  _closePopup(evt) {
+  _closePopupOnEscHandler(evt) {
     if (evt.key === `Escape`) {
-      this._popup.remove();
-      document.removeEventListener(`keydown`, this._closePopup);
-      document.body.classList.remove(`hide-overflow`);
+      this._closePopup();
     }
   }
 
+  _closePopup() {
+    this._popup.remove();
+    this._body.removeEventListener(`keydown`, this._closePopupOnEscHandler);
+    this._body.classList.remove(`hide-overflow`);
+  }
+
   _removeOldPopup() {
-    const oldPopup = document.querySelector(`.film-details`);
+    const oldPopup = this._body.querySelector(`.film-details`);
     if (oldPopup) {
       oldPopup.remove();
     }

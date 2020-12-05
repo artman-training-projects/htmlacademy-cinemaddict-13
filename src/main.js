@@ -44,12 +44,12 @@ const renderFilms = (container, films) => {
 // show-more btn
 const addShowMoreBtn = (listContainer, films) => {
   if (films.length > 5) {
-    renderComponent(listContainer.parentNode, new ShowMoreBtn());
-    const showMoreBtn = mainComponent.getElement().querySelector(`.films-list__show-more`);
-    showMoreBtn.addEventListener(`click`, () => {
+    const showMoreBtn = new ShowMoreBtn();
+    renderComponent(listContainer.parentNode, showMoreBtn);
+    showMoreBtn.setShowMoreHandler(() => {
       const countShownFilms = () => listContainer.querySelectorAll(`.film-card`).length;
       renderFilms(listContainer, films.slice(countShownFilms(), countShownFilms() + ShownFilms.MAIN));
-      (() => films.length === countShownFilms() && showMoreBtn.remove())();
+      (() => films.length === countShownFilms() && removeComponent(showMoreBtn))();
     });
   }
 };
