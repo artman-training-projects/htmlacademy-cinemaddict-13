@@ -2,7 +2,7 @@ import dayjs from "dayjs";
 import {getFormattedRunTime} from "../../../utils";
 import {Keys, MAX_DESCRIPTION_LENGTH} from "../../../consts";
 import AbstractView from "../../abstractView";
-import {renderComponent} from "../../../render";
+import {renderComponent, RenderPosition} from "../../../render";
 import PopupForm from "../../popup/popup-form";
 import PopupFormTop from "../../popup/popup-form-top";
 import PopupFormBottom from "../../popup/popup-form-bottom";
@@ -71,8 +71,8 @@ export default class FilmCard extends AbstractView {
     renderComponent(popupFormContainer, new PopupFormTop(this._film));
     renderComponent(popupFormContainer, new PopupFormBottom(this._film.comments));
 
-    const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
-    renderComponent(popupCommentList, new PopupComment(this._film.comments));
+    const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-title`);
+    renderComponent(popupCommentList, new PopupComment(this._film.comments), RenderPosition.AFTEREND);
 
     const closeButton = this._popup.querySelector(`.film-details__close-btn`);
     closeButton.addEventListener(`click`, this._onClosePopupClick);
