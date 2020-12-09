@@ -31,7 +31,7 @@ export const replaceElement = (oldChild, newChild) => {
 
   const parent = oldChild.parentElement;
 
-  if (parent === null || oldChild === null || newChild === null) {
+  if (!parent || !oldChild || !newChild) {
     throw new Error(`Нельзя заменить несуществующие элементы`);
   }
 

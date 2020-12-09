@@ -1,20 +1,20 @@
 import AbstractView from "../abstractView";
 
-const createFilmsLoadingTemplate = (event) => {
+const createFilmsLoadingTemplate = (filmsStatus) => {
   return (
     `<section class="films-list">
-      <h2 class="films-list__title">${event}</h2>
+      <h2 class="films-list__title">${filmsStatus}</h2>
     </section>`
   );
 };
 
 export default class FilmsLoading extends AbstractView {
-  constructor(event = `Loading...`) {
+  constructor(filmsStatus = `Loading...`) {
     super();
-    this._event = event;
+    this._filmsStatus = filmsStatus;
   }
 
   getTemplate() {
-    return createFilmsLoadingTemplate(this._event);
+    return createFilmsLoadingTemplate(this._filmsStatus);
   }
 }

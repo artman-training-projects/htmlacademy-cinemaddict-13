@@ -3,7 +3,7 @@ import {removeComponent, renderComponent, replaceElement} from "./render";
 import Profile from "./view/header/profile";
 import MainContainer from "./view/main/main-container";
 import FilmListContainer from "./view/main/films/film-list-container";
-import ShowMoreBtn from "./view/main/films/show-more-btn";
+import ShowMoreButton from "./view/main/films/show-more-button";
 // import Stats from './view/nav/stats';
 import Sort from "./view/sort";
 import Filter, {generateFilters} from "./view/nav/filter";
@@ -42,14 +42,19 @@ const renderFilms = (container, films) => {
 };
 
 // show-more btn
-const addShowMoreBtn = (listContainer, films) => {
+const addShowMoreButton = (listContainer, films) => {
   if (films.length > ShownFilms.MAIN) {
-    const showMoreBtn = new ShowMoreBtn();
-    renderComponent(listContainer.parentNode, showMoreBtn);
-    showMoreBtn.setShowMoreHandler(() => {
-      const countShownFilms = () => listContainer.querySelectorAll(`.film-card`).length;
-      renderFilms(listContainer, films.slice(countShownFilms(), countShownFilms() + ShownFilms.MAIN));
-      (() => films.length === countShownFilms() && removeComponent(showMoreBtn))();
+    const showMoreButton = new ShowMoreButton();
+    renderComponent(listContainer.parentNode, showMoreButton);
+
+    showMoreButton.setShowMoreHandler(() => {
+      const countShownFilms = () => listContainer.childNodes.length;
+      const addShowFilms = countShownFilms() + ShownFilms.MAIN;
+      renderFilms(listContainer, films.slice(countShownFilms(), addShowFilms));
+
+      if (films.length === countShownFilms()) {
+        removeComponent(showMoreButton);
+      }
     });
   }
 };
@@ -63,34 +68,46 @@ const loadingComponent = new FilmsLoading();
 const startApp = () => {
   renderComponent(mainSection, filterComponent);
   renderComponent(mainSection, mainComponent);
-  renderComponent(footerStatisticSection, statisticComponent);
   renderComponent(mainComponent, loadingComponent);
+  renderComponent(footerStatisticSection, statisticComponent);
 
   getFilmsFromServer()
     .then((films) => {
       if (films.length) {
         const topRatedFilms = [...films].sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
         const mostCommentedFilms = [...films].sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
+
         const filters = generateFilters(films);
 
-        const watchedFilms = films.filter((film) => film.watched).length;
-        const profilreComponent = new Profile(watchedFilms);
+        const renderProfile = () => {
+          const watchedFilms = films.filter((film) => film.watched).length;
+          const profileComponent = new Profile(watchedFilms);
+          renderComponent(headerSection, profileComponent);
+        };
 
-        removeComponent(loadingComponent);
-        renderComponent(headerSection, profilreComponent);
-        renderComponent(mainSection, new Sort());
-        replaceElement(filterComponent, new Filter(filters));
-        replaceElement(statisticComponent, new Statistic(films.length));
+        const updateTemplate = () => {
+          removeComponent(mainComponent);
+          replaceElement(filterComponent, new Filter(filters));
+          renderComponent(mainSection, new Sort());
+          renderComponent(mainSection, mainComponent);
+          replaceElement(statisticComponent, new Statistic(films.length));
+        };
 
-        const mainListContainer = renderListContainer(mainComponent.getElement(), List.MAIN, true);
-        const topRatedListContainer = renderListContainer(mainComponent.getElement(), List.TOP_RATED);
-        const mostCommentedListContainer = renderListContainer(mainComponent.getElement(), List.MOST_COMMENTED);
+        const renderFilmsLists = () => {
+          const mainListContainer = renderListContainer(mainComponent.getElement(), List.MAIN, true);
+          const topRatedListContainer = renderListContainer(mainComponent.getElement(), List.TOP_RATED);
+          const mostCommentedListContainer = renderListContainer(mainComponent.getElement(), List.MOST_COMMENTED);
 
-        renderFilms(mainListContainer, films.slice(0, ShownFilms.MAIN));
-        renderFilms(topRatedListContainer, topRatedFilms);
-        renderFilms(mostCommentedListContainer, mostCommentedFilms);
+          renderFilms(mainListContainer, films.slice(0, ShownFilms.MAIN));
+          renderFilms(topRatedListContainer, topRatedFilms);
+          renderFilms(mostCommentedListContainer, mostCommentedFilms);
 
-        addShowMoreBtn(mainListContainer, films);
+          addShowMoreButton(mainListContainer, films);
+        };
+
+        updateTemplate();
+        renderProfile();
+        renderFilmsLists();
       } else {
         removeComponent(loadingComponent);
         renderComponent(mainComponent, new NoFilms());

@@ -1,14 +1,19 @@
 import {getRandomizedFilm} from "../mock/films";
 import {getRandomNumber} from "../utils";
 
+const FRACTION = {
+  FILL: 0.5,
+  EMPTY: 0.2,
+};
+
 const films = (() => {
   const random = Math.random();
 
-  if (random > 0.5) {
+  if (random > FRACTION.FILL) {
     return new Array(getRandomNumber(20, 15)).fill(``).map(getRandomizedFilm);
   }
 
-  if (random > 0.2) {
+  if (random > FRACTION.EMPTY) {
     return [];
   }
 
@@ -16,5 +21,5 @@ const films = (() => {
 })();
 
 export const getFilmsFromServer = () => new Promise((resolve, reject) => {
-  setTimeout(() => films ? resolve(films) : reject(new Error(`Упс! Загрузка не удалась`)), 3000);
+  setTimeout(() => films ? resolve(films) : reject(new Error(`Упс! Загрузка не удалась`)), 2000);
 });

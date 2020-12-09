@@ -17,3 +17,7 @@ export const Filters = {
 };
 
 export const MAX_DESCRIPTION_LENGTH = 139;
+
+export const Keys = {
+  ESCAPE: `Escape`
+};

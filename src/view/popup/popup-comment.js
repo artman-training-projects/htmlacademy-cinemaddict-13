@@ -26,6 +26,6 @@ export default class PopupComment extends AbstractView {
   }
 
   getTemplate() {
-    return createPopupCommentTemplate(this._comments);
+    return this._comments.length ? createPopupCommentTemplate(this._comments) : ` `;
   }
 }

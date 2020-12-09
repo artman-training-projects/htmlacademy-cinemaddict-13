@@ -2,18 +2,20 @@ import AbstractView from "../abstractView";
 import {Filters} from "../../consts";
 
 const initFilter = {
-  [Filters.ALL]: 0,
+  [Filters.ALL]: null,
   [Filters.WATCHLIST]: 0,
   [Filters.HISTORY]: 0,
   [Filters.FAVORITES]: 0,
 };
 
-export const generateFilters = (films) => ({
-  [Filters.ALL]: films.length,
-  [Filters.WATCHLIST]: films.filter((film) => film.watchlist).length,
-  [Filters.HISTORY]: films.filter((film) => film.watched).length,
-  [Filters.FAVORITES]: films.filter((film) => film.favorite).length,
-});
+export const generateFilters = (films) => films.reduce((acc, item) => {
+  return {
+    [Filters.ALL]: null,
+    [Filters.WATCHLIST]: item.watchlist ? ++acc[Filters.WATCHLIST] : acc[Filters.WATCHLIST],
+    [Filters.HISTORY]: item.watched ? ++acc[Filters.HISTORY] : acc[Filters.HISTORY],
+    [Filters.FAVORITES]: item.favorite ? ++acc[Filters.FAVORITES] : acc[Filters.FAVORITES],
+  };
+}, initFilter);
 
 
 const generateFilter = (filter) => Object.entries(filter).map(([filterName, amountFilms]) => ({
@@ -21,19 +23,19 @@ const generateFilter = (filter) => Object.entries(filter).map(([filterName, amou
   amount: amountFilms,
 }));
 
-const createMainFilterTemplate = (fl) => {
-  const filters = generateFilter(fl);
+const createMainFilterTemplate = (filters) => {
+  const filter = generateFilter(filters);
 
-  const generateLinks = (navs) => navs.map((nav) => (
-    `<a href="#${nav.filter}"
-      class="main-navigation__item ${nav.filter === Filters.ALL ? `main-navigation__item--active` : ``}">
-      ${nav.filter} ${nav.filter === Filters.ALL ? `` : `<span class="main-navigation__item-count">${nav.amount}</span></a>`}`
+  const generateLinks = (navFilters) => navFilters.map((link) => (
+    `<a href="#${link.filter}"
+      class="main-navigation__item ${link.filter === Filters.ALL ? `main-navigation__item--active` : ``}">
+      ${link.filter} ${link.filter !== Filters.ALL ? `<span class="main-navigation__item-count">${link.amount}</span></a>` : ``}`
   )).join(``);
 
   return (
     `<nav class="main-navigation">
       <div class="main-navigation__items">
-        ${generateLinks(filters)}
+        ${generateLinks(filter)}
       </div>
       <a href="#stats" class="main-navigation__additional">Stats</a>
     </nav>`

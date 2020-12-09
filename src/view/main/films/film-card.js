@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import {getFormattedRunTime} from "../../../utils";
-import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
+import {Keys, MAX_DESCRIPTION_LENGTH} from "../../../consts";
 import AbstractView from "../../abstractView";
 import {renderComponent} from "../../../render";
 import PopupForm from "../../popup/popup-form";
@@ -21,7 +21,7 @@ const createFilmCardTemplate = (film) => {
         <span class="film-card__duration">${getFormattedRunTime(film.runtime)}</span>
         <span class="film-card__genre">${film.genres[0]}</span>
       </p>
-      <img src=${film.poster} alt="" class="film-card__poster">
+      <img src=${film.poster} alt=${film.title} class="film-card__poster">
       <p class="film-card__description">${showDescription(film.description)}</p>
       <a class="film-card__comments">${film.comments.length} comments</a>
       <div class="film-card__controls">
@@ -37,11 +37,12 @@ export default class FilmCard extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
-    this._popup = null;
     this._body = document.body;
-    this._openPopup = this._openPopup.bind(this);
-    this._closePopup = this._closePopup.bind(this);
-    this._closePopupOnEscHandler = this._closePopupOnEscHandler.bind(this);
+
+    this._onOpenPopupClick = this._onOpenPopupClick.bind(this);
+    this._onClosePopupClick = this._onClosePopupClick.bind(this);
+    this._onClosePopupKeydown = this._onClosePopupKeydown.bind(this);
+    this._removeOldPopup = this._removeOldPopup.bind(this);
   }
 
   getTemplate() {
@@ -50,17 +51,17 @@ export default class FilmCard extends AbstractView {
 
   setShowPopupHandler() {
     this.getElement().querySelector(`.film-card__title`)
-      .addEventListener(`click`, this._openPopup);
+      .addEventListener(`click`, this._onOpenPopupClick);
 
     this.getElement().querySelector(`.film-card__poster`)
-      .addEventListener(`click`, this._openPopup);
+      .addEventListener(`click`, this._onOpenPopupClick);
 
     this.getElement().querySelector(`.film-card__comments`)
-      .addEventListener(`click`, this._openPopup);
+      .addEventListener(`click`, this._onOpenPopupClick);
   }
 
-  _openPopup() {
-    this._removeOldPopup(this._popup);
+  _onOpenPopupClick() {
+    this._removeOldPopup();
 
     this._body.classList.add(`hide-overflow`);
     this._popup = new PopupForm().getElement();
@@ -73,21 +74,21 @@ export default class FilmCard extends AbstractView {
     const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
     renderComponent(popupCommentList, new PopupComment(this._film.comments));
 
-    const closeBtn = this._popup.querySelector(`.film-details__close-btn`);
+    const closeButton = this._popup.querySelector(`.film-details__close-btn`);
+    closeButton.addEventListener(`click`, this._onClosePopupClick);
+    this._body.addEventListener(`keydown`, this._onClosePopupKeydown);
 
-    this._body.addEventListener(`keydown`, this._closePopupOnEscHandler);
-    closeBtn.addEventListener(`click`, this._closePopup);
   }
 
-  _closePopupOnEscHandler(evt) {
-    if (evt.key === `Escape`) {
-      this._closePopup();
+  _onClosePopupKeydown(evt) {
+    if (evt.key === Keys.ESCAPE) {
+      this._onClosePopupClick();
     }
   }
 
-  _closePopup() {
+  _onClosePopupClick() {
     this._popup.remove();
-    this._body.removeEventListener(`keydown`, this._closePopupOnEscHandler);
+    this._body.removeEventListener(`keydown`, this._onClosePopupKeydown);
     this._body.classList.remove(`hide-overflow`);
   }
 
