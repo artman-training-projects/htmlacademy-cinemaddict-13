@@ -618,6 +618,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const RenderPosition = {
   BEFOREEND: `beforeend`,
+  AFTEREND: `afterend`,
 };
 
 const renderComponent = (container, child, place = RenderPosition.BEFOREEND) => {
@@ -632,6 +633,9 @@ const renderComponent = (container, child, place = RenderPosition.BEFOREEND) => 
   switch (place) {
     case RenderPosition.BEFOREEND:
       container.append(child);
+      break;
+    case RenderPosition.AFTEREND:
+      container.after(child);
       break;
   }
 };
@@ -973,8 +977,8 @@ class FilmCard extends _abstractView__WEBPACK_IMPORTED_MODULE_3__["default"] {
     Object(_render__WEBPACK_IMPORTED_MODULE_4__["renderComponent"])(popupFormContainer, new _popup_popup_form_top__WEBPACK_IMPORTED_MODULE_6__["default"](this._film));
     Object(_render__WEBPACK_IMPORTED_MODULE_4__["renderComponent"])(popupFormContainer, new _popup_popup_form_bottom__WEBPACK_IMPORTED_MODULE_7__["default"](this._film.comments));
 
-    const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-list`);
-    Object(_render__WEBPACK_IMPORTED_MODULE_4__["renderComponent"])(popupCommentList, new _popup_popup_comment__WEBPACK_IMPORTED_MODULE_8__["default"](this._film.comments));
+    const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-title`);
+    Object(_render__WEBPACK_IMPORTED_MODULE_4__["renderComponent"])(popupCommentList, new _popup_popup_comment__WEBPACK_IMPORTED_MODULE_8__["default"](this._film.comments), _render__WEBPACK_IMPORTED_MODULE_4__["RenderPosition"].AFTEREND);
 
     const closeButton = this._popup.querySelector(`.film-details__close-btn`);
     closeButton.addEventListener(`click`, this._onClosePopupClick);
@@ -1294,7 +1298,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const createPopupCommentTemplate = (comments) => {
-  return comments.map((comment) => (
+  const markupComments = comments.map((comment) => (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
         <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
@@ -1309,6 +1313,12 @@ const createPopupCommentTemplate = (comments) => {
       </div>
     </li>`
   )).join(``);
+
+  return (
+    `<ul class="film-details__comments-list">
+      ${markupComments}
+    </ul>`
+  );
 };
 
 class PopupComment extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
@@ -1344,7 +1354,6 @@ const createPopupFormBottomTemplate = (comments) => {
       <section class="film-details__comments-wrap">
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
-        <ul class="film-details__comments-list"></ul>
 
         <div class="film-details__new-comment">
           <div class="film-details__add-emoji-label"></div>
