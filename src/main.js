@@ -46,14 +46,14 @@ const addShowMoreButton = (listContainer, films) => {
   if (films.length > ShownFilms.MAIN) {
     const showMoreButton = new ShowMoreButton();
     renderComponent(listContainer.parentNode, showMoreButton);
+    let showedFilms = ShownFilms.MAIN;
 
     showMoreButton.setShowMoreHandler(() => {
-      const showedFilms = listContainer.childNodes;
+      const addShowFilms = showedFilms + ShownFilms.MAIN;
+      renderFilms(listContainer, films.slice(showedFilms, addShowFilms));
+      showedFilms += ShownFilms.MAIN;
 
-      const addShowFilms = showedFilms.length + ShownFilms.MAIN;
-      renderFilms(listContainer, films.slice(showedFilms.length, addShowFilms));
-
-      if (films.length === showedFilms.length) {
+      if (films.length <= showedFilms) {
         removeComponent(showMoreButton);
       }
     });

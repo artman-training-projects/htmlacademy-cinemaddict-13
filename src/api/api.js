@@ -2,7 +2,7 @@ import {getRandomizedFilm} from "../mock/films";
 import {getRandomNumber} from "../utils";
 
 const FRACTION = {
-  FILL: 0.5,
+  FILL: 0.4,
   EMPTY: 0.2,
 };
 
