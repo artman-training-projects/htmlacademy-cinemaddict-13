@@ -271,7 +271,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const FRACTION = {
-  FILL: 0.5,
+  FILL: 0.4,
   EMPTY: 0.2,
 };
 
@@ -409,14 +409,14 @@ const addShowMoreButton = (listContainer, films) => {
   if (films.length > _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].MAIN) {
     const showMoreButton = new _view_main_films_show_more_button__WEBPACK_IMPORTED_MODULE_5__["default"]();
     Object(_render__WEBPACK_IMPORTED_MODULE_1__["renderComponent"])(listContainer.parentNode, showMoreButton);
+    let showedFilms = _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].MAIN;
 
     showMoreButton.setShowMoreHandler(() => {
-      const showedFilms = listContainer.childNodes;
+      const addShowFilms = showedFilms + _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].MAIN;
+      renderFilms(listContainer, films.slice(showedFilms, addShowFilms));
+      showedFilms += _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].MAIN;
 
-      const addShowFilms = showedFilms.length + _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].MAIN;
-      renderFilms(listContainer, films.slice(showedFilms.length, addShowFilms));
-
-      if (films.length === showedFilms.length) {
+      if (films.length <= showedFilms) {
         Object(_render__WEBPACK_IMPORTED_MODULE_1__["removeComponent"])(showMoreButton);
       }
     });
