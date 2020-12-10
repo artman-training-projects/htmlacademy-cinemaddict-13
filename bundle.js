@@ -411,11 +411,12 @@ const addShowMoreButton = (listContainer, films) => {
     Object(_render__WEBPACK_IMPORTED_MODULE_1__["renderComponent"])(listContainer.parentNode, showMoreButton);
 
     showMoreButton.setShowMoreHandler(() => {
-      const countShownFilms = () => listContainer.childNodes.length;
-      const addShowFilms = countShownFilms() + _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].MAIN;
-      renderFilms(listContainer, films.slice(countShownFilms(), addShowFilms));
+      const showedFilms = listContainer.childNodes;
 
-      if (films.length === countShownFilms()) {
+      const addShowFilms = showedFilms.length + _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].MAIN;
+      renderFilms(listContainer, films.slice(showedFilms.length, addShowFilms));
+
+      if (films.length === showedFilms.length) {
         Object(_render__WEBPACK_IMPORTED_MODULE_1__["removeComponent"])(showMoreButton);
       }
     });
