@@ -1,4 +1,4 @@
-# Проект «Киноман»
+# Проект «Киноман» ![Project test & build](https://github.com/artman-training-projects/htmlacademy-cinemaddict-13/workflows/Project%20test%20&%20build/badge.svg)
 
 * Студент: [Владимир Артюхов](https://up.htmlacademy.ru/htmlcss/26/user/1095935).
 * Наставник: `Неизвестно`.
