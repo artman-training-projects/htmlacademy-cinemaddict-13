@@ -1,10 +1,11 @@
-export const createPopupFormBottom = (comments) => {
+import AbstractView from "../abstractView";
+
+const createPopupFormBottomTemplate = (comments) => {
   return (
     `<div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
-        <ul class="film-details__comments-list"></ul>
 
         <div class="film-details__new-comment">
           <div class="film-details__add-emoji-label"></div>
@@ -39,3 +40,14 @@ export const createPopupFormBottom = (comments) => {
     </div>`
   );
 };
+
+export default class PopupFormBottom extends AbstractView {
+  constructor(comments) {
+    super();
+    this._comments = comments;
+  }
+
+  getTemplate() {
+    return createPopupFormBottomTemplate(this._comments);
+  }
+}
