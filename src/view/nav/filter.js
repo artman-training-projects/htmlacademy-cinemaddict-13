@@ -19,17 +19,17 @@ export const generateFilters = (films) => films.reduce((acc, item) => {
 
 
 const generateFilter = (filter) => Object.entries(filter).map(([filterName, amountFilms]) => ({
-  filter: filterName,
+  name: filterName,
   amount: amountFilms,
 }));
 
 const createMainFilterTemplate = (filters) => {
   const filter = generateFilter(filters);
 
-  const generateLinks = (navFilters) => navFilters.map((link) => (
-    `<a href="#${link.filter}"
-      class="main-navigation__item ${link.filter === Filters.ALL ? `main-navigation__item--active` : ``}">
-      ${link.filter} ${link.filter !== Filters.ALL ? `<span class="main-navigation__item-count">${link.amount}</span></a>` : ``}`
+  const generateLinks = (navFilters) => navFilters.map((navFilter) => (
+    `<a href="#${navFilter.name}"
+      class="main-navigation__item ${navFilter.name === Filters.ALL ? `main-navigation__item--active` : ``}">
+      ${navFilter.name} ${navFilter.name !== Filters.ALL ? `<span class="main-navigation__item-count">${navFilter.amount}</span></a>` : ``}`
   )).join(``);
 
   return (
