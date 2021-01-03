@@ -1,13 +1,21 @@
 import AbstractView from "../../abstractView";
 
-const createMainFilmsListContainerTemplate = () => {
+const createFilmsListTemplate = (attr, isMain = false) => {
+  const addExtra = () => !isMain ? `films-list--extra` : ``;
+
   return (
-    `<div class="films-list__container"></div>`
+    `<section class="films-list ${addExtra()}" data-list="${attr}"></section>`
   );
 };
 
 export default class FilmListContainer extends AbstractView {
+  constructor(attr, isMain = false) {
+    super();
+    this._attr = attr;
+    this._isMain = isMain;
+  }
+
   getTemplate() {
-    return createMainFilmsListContainerTemplate();
+    return createFilmsListTemplate(this._attr, this._isMain);
   }
 }
