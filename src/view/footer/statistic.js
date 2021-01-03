@@ -12,6 +12,11 @@ export default class Statistic extends AbstractView {
     this._amount = amount;
   }
 
+  set totalFilms(amount) {
+    this._amount = amount;
+    this.updateElement();
+  }
+
   getTemplate() {
     return createFooterStatisticTemplate(this._amount);
   }

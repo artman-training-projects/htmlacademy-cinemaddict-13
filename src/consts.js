@@ -21,3 +21,7 @@ export const MAX_DESCRIPTION_LENGTH = 139;
 export const Keys = {
   ESCAPE: `Escape`
 };
+
+export const Message = {
+  NO_FILM: `There are no movies in our database`,
+};

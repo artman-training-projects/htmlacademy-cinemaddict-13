@@ -48,6 +48,11 @@ export default class Filter extends AbstractView {
     this._filters = filters;
   }
 
+  set filters(filters) {
+    this._filters = filters;
+    this.updateElement();
+  }
+
   getTemplate() {
     return createMainFilterTemplate(this._filters);
   }

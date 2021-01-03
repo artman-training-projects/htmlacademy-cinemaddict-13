@@ -16,6 +16,11 @@ export default class FilmsLoading extends AbstractView {
     this._filmsStatus = filmsStatus;
   }
 
+  set message(str) {
+    this._filmsStatus = str;
+    this.updateElement();
+  }
+
   getTemplate() {
     return createFilmsLoadingTemplate(this._filmsStatus);
   }

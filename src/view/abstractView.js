@@ -25,7 +25,11 @@ export default class AbstractView {
 
   updateElement() {
     this._newElement = createElement(this.getTemplate());
-    replaceElement(this._element, this._newElement);
+
+    if (this._element) {
+      replaceElement(this._element, this._newElement);
+    }
+
     this._newElement = null;
   }
 

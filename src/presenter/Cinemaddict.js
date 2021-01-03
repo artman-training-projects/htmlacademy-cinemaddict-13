@@ -1,14 +1,13 @@
 
-import {List, ShownFilms} from "../consts";
+import {List, Message, ShownFilms} from "../consts";
 import {getFilmsFromServer} from "../api/api";
-import {removeComponent, renderComponent, replaceElement} from "../render";
+import {removeComponent, renderComponent} from "../render";
 
 import Profile from "../view/header/profile";
 import Filter, {generateFilters} from "../view/nav/filter";
 import Stats from '../view/nav/stats';
 import Sort from "../view/sort";
 import FilmsLoading from "../view/main/films-loading";
-import NoFilms from "../view/main/no-films";
 import FilmList from "../view/main/films/film-list";
 import FilmListHeader from "../view/main/films/film-list-header";
 import FilmListContainer from "../view/main/films/film-list-container";
@@ -20,13 +19,19 @@ import MainContainer from "../view/main/main-container";
 export default class Cinemaddict {
   constructor(entryNodes) {
     this._entryNodes = entryNodes;
+    this._films = [];
+    this._topRatedFilms = [];
+    this._mostCommentedFilms = [];
+
+    this._mainList = new FilmList(List.MAIN, true);
+    this._mainTopFilmsList = new FilmList(List.TOP_RATED);
+    this._mainMostCommentedList = new FilmList(List.MOST_COMMENTED);
 
     this._profile = new Profile();
     this._filter = new Filter();
     this._stats = new Stats();
     this._sort = new Sort();
     this._loading = new FilmsLoading();
-    this._noFilms = new NoFilms();
     this._mainContainer = new MainContainer();
     this._filmList = new FilmList();
     this._filmCard = new FilmCard();
@@ -35,55 +40,71 @@ export default class Cinemaddict {
   }
 
   init() {
-    renderComponent(this._entryNodes.main, this._filter);
-    renderComponent(this._entryNodes.main, this._loading);
-    renderComponent(this._entryNodes.footer, this._statistic);
+    this._renderBaseTemplate();
 
     getFilmsFromServer()
     .then((films) => {
       if (films.length) {
-        const topRatedFilms = [...films].sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
-        const mostCommentedFilms = [...films].sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
-
-        const filters = generateFilters(films);
-
-        const renderProfile = () => {
-          const watchedFilms = films.filter((film) => film.watched).length;
-          const profileComponent = new Profile(watchedFilms);
-          renderComponent(this._entryNodes.header, profileComponent);
-        };
-
-        const updateTemplate = () => {
-          replaceElement(this._filter, new Filter(filters));
-          renderComponent(this._entryNodes.main, new Sort());
-          removeComponent(this._loading);
-          renderComponent(this._entryNodes.main, this._mainContainer);
-          replaceElement(this._statistic, new Statistic(films.length));
-        };
+        this._films = films;
+        this._getTopRatedFilms();
+        this._getMostCommentedFilms();
 
         const renderFilmsLists = () => {
-          const mainListContainer = this._renderListContainer(this._mainContainer.getElement(), List.MAIN, true);
-          const topRatedListContainer = this._renderListContainer(this._mainContainer.getElement(), List.TOP_RATED);
-          const mostCommentedListContainer = this._renderListContainer(this._mainContainer.getElement(), List.MOST_COMMENTED);
+          const mainListContainer = this._renderFilmsListContainer(this._mainContainer.getElement(), List.MAIN, true);
+          const topRatedListContainer = this._renderFilmsListContainer(this._mainContainer.getElement(), List.TOP_RATED);
+          const mostCommentedListContainer = this._renderFilmsListContainer(this._mainContainer.getElement(), List.MOST_COMMENTED);
 
           this._renderFilms(mainListContainer, films.slice(0, ShownFilms.MAIN));
-          this._renderFilms(topRatedListContainer, topRatedFilms);
-          this._renderFilms(mostCommentedListContainer, mostCommentedFilms);
+          this._renderFilms(topRatedListContainer, this._topRatedFilms);
+          this._renderFilms(mostCommentedListContainer, this._mostCommentedFilms);
 
-          this._addShowMoreButton(mainListContainer, films);
+          this._addShowMoreButton(mainListContainer, this._films);
         };
 
-        updateTemplate();
-        renderProfile();
+        this._updateBaseTemplate();
         renderFilmsLists();
       } else {
-        replaceElement(this._loading, this._noFilms);
+        this._loading.message = Message.NO_FILM;
       }
     })
-    .catch((err) => replaceElement(this._loading, new FilmsLoading(err)));
+    .catch((err) => {
+      this._loading.message = err;
+    });
   }
 
-  _renderListContainer(container, listType, isMain = false) {
+  _getTopRatedFilms() {
+    this._topRatedFilms = this._films.slice().sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
+  }
+
+  _getMostCommentedFilms() {
+    this._mostCommentedFilms = this._films.slice().sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
+  }
+
+  _renderBaseTemplate() {
+    renderComponent(this._entryNodes.main, this._filter);
+    renderComponent(this._entryNodes.main, this._loading);
+    renderComponent(this._entryNodes.footer, this._statistic);
+  }
+
+  _updateBaseTemplate() {
+    this._renderProfile();
+
+    this._filter.filters = generateFilters(this._films);
+
+    removeComponent(this._loading);
+    renderComponent(this._entryNodes.main, this._sort);
+    renderComponent(this._entryNodes.main, this._mainContainer);
+
+    this._statistic.totalFilms = this._films.length;
+  }
+
+  _renderProfile() {
+    const watchedFilms = this._films.filter((film) => film.watched).length;
+    this._profile.watchedFilms = watchedFilms;
+    renderComponent(this._entryNodes.header, this._profile);
+  }
+
+  _renderFilmsListContainer(container, listType, isMain = false) {
     renderComponent(container, new FilmList(listType, isMain));
 
     const mainContainer = container.querySelector(`[data-list="${listType}"]`);
@@ -103,17 +124,16 @@ export default class Cinemaddict {
 
   _addShowMoreButton(listContainer, films) {
     if (films.length > ShownFilms.MAIN) {
-      const showMoreButton = new ShowMoreButton();
-      renderComponent(listContainer.parentNode, showMoreButton);
+      renderComponent(listContainer.parentNode, this._showMoreButton);
       let showedFilms = ShownFilms.MAIN;
 
-      showMoreButton.setShowMoreHandler(() => {
+      this._showMoreButton.setShowMoreHandler(() => {
         const addShowFilms = showedFilms + ShownFilms.MAIN;
         this._renderFilms(listContainer, films.slice(showedFilms, addShowFilms));
         showedFilms += ShownFilms.MAIN;
 
         if (films.length <= showedFilms) {
-          removeComponent(showMoreButton);
+          removeComponent(this._showMoreButton);
         }
       });
     }
