@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import AbstractView from "../abstractView";
 import {getFormattedRunTime} from "../../utils";
+import FilmPopup from "../../presenter/FilmPopup";
 
 const createPopupInfoTemplate = (film) => {
   const getIsActive = (isChecked) => isChecked ? `checked` : ``;
@@ -84,6 +85,7 @@ export default class PopupInfo extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
+    this._popup = new FilmPopup();
   }
 
   set film(film) {
@@ -93,5 +95,10 @@ export default class PopupInfo extends AbstractView {
 
   getTemplate() {
     return createPopupInfoTemplate(this._film);
+  }
+
+  setClosePopupButtonHandler() {
+    this.getElement().querySelector(`.film-details__close-btn`)
+     .addEventListener(`click`, () => this._popup.close());
   }
 }

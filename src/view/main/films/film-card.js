@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
-import {getFormattedRunTime} from "../../../utils";
-import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
 import AbstractView from "../../abstractView";
+import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
+import {getFormattedRunTime} from "../../../utils";
 import FilmPopup from "../../../presenter/FilmPopup";
 
 const createFilmCardTemplate = (film) => {
@@ -33,6 +33,7 @@ export default class FilmCard extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
+    this._popup = new FilmPopup();
   }
 
   getTemplate() {
@@ -40,8 +41,6 @@ export default class FilmCard extends AbstractView {
   }
 
   setShowPopupHandlers() {
-    this._popup = new FilmPopup();
-
     this.getElement().querySelector(`.film-card__title`)
       .addEventListener(`click`, () => this._popup.open(this._film));
 

@@ -1,17 +1,15 @@
 import {Keys} from "../consts";
-import {renderComponent} from "../render";
+import {removeComponent, renderComponent} from "../render";
 import PopupForm from "../view/popup/popup-form";
 import PopupInfo from "../view/popup/popup-info";
 import PopupComments from "../view/popup/popup-comments";
 
-const single = Symbol(`Singleton-FilmPopup`);
-
 export default class FilmPopup {
   constructor() {
-    if (!new.target[single]) {
-      new.target[single] = this;
+    if (!new.target.instance) {
+      new.target.instance = this;
     } else {
-      return new.target[single];
+      return new.target.instance;
     }
 
     this._container = document.body;
@@ -22,9 +20,9 @@ export default class FilmPopup {
     this._popupInfo = null;
     this._popupComments = null;
 
-    this._renderPopup = this._renderPopup.bind(this);
+    this._showPopup = this._showPopup.bind(this);
     this._updatePopup = this._updatePopup.bind(this);
-    this._onClosePopupClick = this._onClosePopupClick.bind(this);
+    this.close = this.close.bind(this);
     this._onClosePopupKeydown = this._onClosePopupKeydown.bind(this);
   }
 
@@ -34,13 +32,32 @@ export default class FilmPopup {
     if (this._isShow) {
       this._updatePopup();
     } else {
-      this._renderPopup();
+      this._showPopup();
     }
   }
 
-  _renderPopup() {
-    this._isShow = true;
+  close() {
+    this._isShow = false;
+    this._popupForm.getElement().remove();
 
+    this._container.removeEventListener(`keydown`, this._onClosePopupKeydown);
+    this._container.classList.remove(`hide-overflow`);
+  }
+
+  _showPopup() {
+    this._isShow = true;
+    this._renderPopup();
+
+    this._container.addEventListener(`keydown`, this._onClosePopupKeydown);
+    this._container.classList.add(`hide-overflow`);
+  }
+
+  _updatePopup() {
+    removeComponent(this._popupForm);
+    this._renderPopup();
+  }
+
+  _renderPopup() {
     this._popupForm = new PopupForm();
     this._popupInfo = new PopupInfo(this._film);
     this._popupComments = new PopupComments(this._film.comments);
@@ -49,34 +66,12 @@ export default class FilmPopup {
     renderComponent(this._popupForm, this._popupInfo);
     renderComponent(this._popupForm, this._popupComments);
 
-    this._container.addEventListener(`keydown`, this._onClosePopupKeydown);
-    this._container.classList.add(`hide-overflow`);
-
-    this._setCloseButtonHandler();
-  }
-
-  _updatePopup() {
-    this._popupInfo.film = this._film;
-    this._popupComments.comments = this._film.comments;
-
-    this._setCloseButtonHandler();
-  }
-
-  _setCloseButtonHandler() {
-    const closeButton = this._container.querySelector(`.film-details__close-btn`);
-    closeButton.addEventListener(`click`, this._onClosePopupClick);
+    this._popupInfo.setClosePopupButtonHandler();
   }
 
   _onClosePopupKeydown(evt) {
     if (evt.key === Keys.ESCAPE) {
-      this._onClosePopupClick();
+      this.close();
     }
-  }
-
-  _onClosePopupClick() {
-    this._isShow = false;
-    this._popupForm.getElement().remove();
-    this._container.removeEventListener(`keydown`, this._onClosePopupKeydown);
-    this._container.classList.remove(`hide-overflow`);
   }
 }
