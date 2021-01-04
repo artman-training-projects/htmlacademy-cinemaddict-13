@@ -1,4 +1,4 @@
-import {ShownFilms} from "../consts";
+import {List, ShownFilms} from "../consts";
 import {removeComponent, renderComponent} from "../render";
 
 import FilmListContainer from "../view/main/films/film-list-container";
@@ -8,10 +8,11 @@ import FilmCard from "../view/main/films/film-card";
 import ShowMoreButton from "../view/main/films/show-more-button";
 
 export default class FilmList {
-  constructor(type, isMain = false) {
+  constructor(type) {
     this._type = type;
-    this._isMain = isMain;
+    this._isMain = type === List.MAIN;
     this._films = [];
+    this._showedFilms = ShownFilms.MAIN;
 
     this._filmListContainer = null;
     this._filmListHeader = null;
@@ -55,14 +56,13 @@ export default class FilmList {
     if (this._films.length > ShownFilms.MAIN) {
       this._showMoreButton = new ShowMoreButton();
       renderComponent(this._filmListContainer, this._showMoreButton);
-      let showedFilms = ShownFilms.MAIN;
 
       this._showMoreButton.setShowMoreHandler(() => {
-        const addShowFilms = showedFilms + ShownFilms.MAIN;
-        this._renderFilms(this._films.slice(showedFilms, addShowFilms));
-        showedFilms += ShownFilms.MAIN;
+        const addShowFilms = this._showedFilms + ShownFilms.MAIN;
+        this._renderFilms(this._films.slice(this._showedFilms, addShowFilms));
+        this._showedFilms += ShownFilms.MAIN;
 
-        if (this._films.length <= showedFilms) {
+        if (this._films.length <= this._showedFilms) {
           removeComponent(this._showMoreButton);
         }
       });

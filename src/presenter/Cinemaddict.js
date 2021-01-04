@@ -14,21 +14,17 @@ import Statistic from "../view/footer/statistic";
 export default class Cinemaddict {
   constructor(entryNodes) {
     this._entryNodes = entryNodes;
-    this._films = [];
-    this._topRatedFilms = [];
-    this._mostCommentedFilms = [];
-
-    this._mainList = new FilmList(List.MAIN, true);
-    this._topRatedList = new FilmList(List.TOP_RATED);
-    this._mostCommentedList = new FilmList(List.MOST_COMMENTED);
+    this._films = {};
+    this._lists = {};
 
     this._profile = new Profile();
     this._filter = new Filter();
+    this._statistic = new Statistic();
+    this._loading = new FilmsLoading();
+
     this._stats = new Stats();
     this._sort = new Sort();
-    this._loading = new FilmsLoading();
     this._mainContainer = new MainContainer();
-    this._statistic = new Statistic();
   }
 
   init() {
@@ -37,7 +33,7 @@ export default class Cinemaddict {
     getFilmsFromServer()
     .then((films) => {
       if (films.length) {
-        this._films = films.slice();
+        this._films[List.MAIN] = films.slice();
         this._getTopRatedFilms();
         this._getMostCommentedFilms();
 
@@ -53,12 +49,12 @@ export default class Cinemaddict {
   }
 
   _getTopRatedFilms() {
-    this._topRatedFilms = this._films.slice()
+    this._films[List.TOP_RATED] = this._films[List.MAIN].slice()
       .sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
   }
 
   _getMostCommentedFilms() {
-    this._mostCommentedFilms = this._films.slice()
+    this._films[List.MOST_COMMENTED] = this._films[List.MAIN].slice()
       .sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
   }
 
@@ -69,18 +65,17 @@ export default class Cinemaddict {
   }
 
   _renderFilmsList() {
-    this._mainList.films = this._films;
-    this._mainList.render(this._mainContainer);
-
-    this._topRatedList.films = this._topRatedFilms;
-    this._topRatedList.render(this._mainContainer);
-
-    this._mostCommentedList.films = this._mostCommentedFilms;
-    this._mostCommentedList.render(this._mainContainer);
+    for (const type in List) {
+      if (List.hasOwnProperty(type)) {
+        this._lists[type] = new FilmList(List[type]);
+        this._lists[type].films = this._films[List[type]];
+        this._lists[type].render(this._mainContainer);
+      }
+    }
   }
 
   _renderProfile() {
-    const watchedFilms = this._films.filter((film) => film.watched).length;
+    const watchedFilms = this._films[List.MAIN].filter((film) => film.watched).length;
     this._profile.watchedFilms = watchedFilms;
     renderComponent(this._entryNodes.header, this._profile);
   }
@@ -88,12 +83,12 @@ export default class Cinemaddict {
   _updateBaseTemplate() {
     this._renderProfile();
 
-    this._filter.filters = generateFilters(this._films);
+    this._filter.filters = generateFilters(this._films[List.MAIN]);
 
     removeComponent(this._loading);
     renderComponent(this._entryNodes.main, this._sort);
     renderComponent(this._entryNodes.main, this._mainContainer);
 
-    this._statistic.totalFilms = this._films.length;
+    this._statistic.totalFilms = this._films[List.MAIN].length;
   }
 }

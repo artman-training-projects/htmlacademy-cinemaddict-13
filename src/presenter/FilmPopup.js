@@ -22,8 +22,8 @@ export default class FilmPopup {
 
     this._showPopup = this._showPopup.bind(this);
     this._updatePopup = this._updatePopup.bind(this);
-    this.close = this.close.bind(this);
     this._onClosePopupKeydown = this._onClosePopupKeydown.bind(this);
+    this.close = this.close.bind(this);
   }
 
   open(film) {
