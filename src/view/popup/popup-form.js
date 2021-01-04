@@ -3,7 +3,7 @@ import AbstractView from "../abstractView";
 const createPopupFormTemplate = () => {
   return (
     `<section class="film-details">
-        <form class="film-details__inner" action="" method="get"></form>
+      <form class="film-details__inner" action="" method="get"></form>
     </section>`
   );
 };

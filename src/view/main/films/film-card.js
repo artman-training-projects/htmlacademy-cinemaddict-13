@@ -1,12 +1,8 @@
 import dayjs from "dayjs";
 import {getFormattedRunTime} from "../../../utils";
-import {Keys, MAX_DESCRIPTION_LENGTH} from "../../../consts";
+import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
 import AbstractView from "../../abstractView";
-import {renderComponent, RenderPosition} from "../../../render";
-import PopupForm from "../../popup/popup-form";
-import PopupFormTop from "../../popup/popup-form-top";
-import PopupFormBottom from "../../popup/popup-form-bottom";
-import PopupComment from "../../popup/popup-comment";
+import FilmPopup from "../../../presenter/FilmPopup";
 
 const createFilmCardTemplate = (film) => {
   const showDescription = (description) => description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
@@ -37,65 +33,22 @@ export default class FilmCard extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
-    this._body = document.body;
-
-    this._onOpenPopupClick = this._onOpenPopupClick.bind(this);
-    this._onClosePopupClick = this._onClosePopupClick.bind(this);
-    this._onClosePopupKeydown = this._onClosePopupKeydown.bind(this);
-    this._removeOldPopup = this._removeOldPopup.bind(this);
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._film);
   }
 
-  setShowPopupHandler() {
+  setShowPopupHandlers() {
+    this._popup = new FilmPopup();
+
     this.getElement().querySelector(`.film-card__title`)
-      .addEventListener(`click`, this._onOpenPopupClick);
+      .addEventListener(`click`, () => this._popup.open(this._film));
 
     this.getElement().querySelector(`.film-card__poster`)
-      .addEventListener(`click`, this._onOpenPopupClick);
+      .addEventListener(`click`, () => this._popup.open(this._film));
 
     this.getElement().querySelector(`.film-card__comments`)
-      .addEventListener(`click`, this._onOpenPopupClick);
-  }
-
-  _onOpenPopupClick() {
-    this._removeOldPopup();
-
-    this._body.classList.add(`hide-overflow`);
-    this._popup = new PopupForm().getElement();
-    renderComponent(this._body, this._popup);
-
-    const popupFormContainer = this._popup.querySelector(`.film-details__inner`);
-    renderComponent(popupFormContainer, new PopupFormTop(this._film));
-    renderComponent(popupFormContainer, new PopupFormBottom(this._film.comments));
-
-    const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-title`);
-    renderComponent(popupCommentList, new PopupComment(this._film.comments), RenderPosition.AFTEREND);
-
-    const closeButton = this._popup.querySelector(`.film-details__close-btn`);
-    closeButton.addEventListener(`click`, this._onClosePopupClick);
-    this._body.addEventListener(`keydown`, this._onClosePopupKeydown);
-
-  }
-
-  _onClosePopupKeydown(evt) {
-    if (evt.key === Keys.ESCAPE) {
-      this._onClosePopupClick();
-    }
-  }
-
-  _onClosePopupClick() {
-    this._popup.remove();
-    this._body.removeEventListener(`keydown`, this._onClosePopupKeydown);
-    this._body.classList.remove(`hide-overflow`);
-  }
-
-  _removeOldPopup() {
-    const oldPopup = this._body.querySelector(`.film-details`);
-    if (oldPopup) {
-      oldPopup.remove();
-    }
+      .addEventListener(`click`, () => this._popup.open(this._film));
   }
 }

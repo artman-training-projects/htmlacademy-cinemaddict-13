@@ -11,7 +11,6 @@ import FilmsLoading from "../view/main/films-loading";
 import MainContainer from "../view/main/main-container";
 import Statistic from "../view/footer/statistic";
 
-
 export default class Cinemaddict {
   constructor(entryNodes) {
     this._entryNodes = entryNodes;
@@ -28,7 +27,7 @@ export default class Cinemaddict {
     this._stats = new Stats();
     this._sort = new Sort();
     this._loading = new FilmsLoading();
-    this._mostCommentedListontainer = new MainContainer();
+    this._mainContainer = new MainContainer();
     this._statistic = new Statistic();
   }
 
@@ -71,13 +70,13 @@ export default class Cinemaddict {
 
   _renderFilmsList() {
     this._mainList.films = this._films;
-    this._mainList.renderList(this._mostCommentedListontainer);
+    this._mainList.render(this._mainContainer);
 
     this._topRatedList.films = this._topRatedFilms;
-    this._topRatedList.renderList(this._mostCommentedListontainer);
+    this._topRatedList.render(this._mainContainer);
 
     this._mostCommentedList.films = this._mostCommentedFilms;
-    this._mostCommentedList.renderList(this._mostCommentedListontainer);
+    this._mostCommentedList.render(this._mainContainer);
   }
 
   _renderProfile() {
@@ -93,7 +92,7 @@ export default class Cinemaddict {
 
     removeComponent(this._loading);
     renderComponent(this._entryNodes.main, this._sort);
-    renderComponent(this._entryNodes.main, this._mostCommentedListontainer);
+    renderComponent(this._entryNodes.main, this._mainContainer);
 
     this._statistic.totalFilms = this._films.length;
   }

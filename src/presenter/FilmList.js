@@ -13,19 +13,17 @@ export default class FilmList {
     this._isMain = isMain;
     this._films = [];
 
-    this._filmListContainer = new FilmListContainer(type, isMain);
-    this._filmListHeader = new FilmListHeader(type, isMain);
-    this._filmListContent = new FilmListContent();
+    this._filmListContainer = null;
+    this._filmListHeader = null;
+    this._filmListContent = null;
   }
 
   set films(films) {
     this._films = films.slice();
   }
 
-  renderList(container) {
-    renderComponent(container, this._filmListContainer);
-    renderComponent(this._filmListContainer, this._filmListHeader);
-    renderComponent(this._filmListContainer, this._filmListContent);
+  render(container) {
+    this._renderListContainer(container);
 
     if (this._isMain) {
       this._renderFilms(this._films.slice(0, ShownFilms.MAIN));
@@ -35,11 +33,21 @@ export default class FilmList {
     }
   }
 
+  _renderListContainer(container) {
+    this._filmListContainer = new FilmListContainer(this._type, this._isMain);
+    this._filmListHeader = new FilmListHeader(this._type, this._isMain);
+    this._filmListContent = new FilmListContent();
+
+    renderComponent(container, this._filmListContainer);
+    renderComponent(this._filmListContainer, this._filmListHeader);
+    renderComponent(this._filmListContainer, this._filmListContent);
+  }
+
   _renderFilms(films = this._films) {
     films.forEach((film) => {
       const filmCard = new FilmCard(film);
       renderComponent(this._filmListContent, filmCard);
-      filmCard.setShowPopupHandler();
+      filmCard.setShowPopupHandlers();
     });
   }
 
