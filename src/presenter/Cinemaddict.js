@@ -1,4 +1,4 @@
-import {List, Message, ShownFilms} from "../consts";
+import {List, Message, ShownFilms, Sorts} from "../consts";
 import {getFilmsFromServer} from "../api/api";
 import Film from "../api/film";
 import {removeComponent, renderComponent} from "../render";
@@ -14,8 +14,15 @@ import Statistic from "../view/footer/statistic";
 
 export default class Cinemaddict {
   constructor(entryNodes) {
+    if (!new.target.instance) {
+      new.target.instance = this;
+    } else {
+      return new.target.instance;
+    }
+
     this._entryNodes = entryNodes;
     this._films = {};
+    this._filmsUnsort = {};
     this._lists = {};
 
     this._profile = new Profile();
@@ -28,6 +35,12 @@ export default class Cinemaddict {
     this._mainContainer = new MainContainer();
   }
 
+  set sortType(type) {
+    this._currentSortType = type;
+    this._sortFilms(type);
+    this._updateList();
+  }
+
   init() {
     this._renderBaseTemplate();
 
@@ -35,6 +48,8 @@ export default class Cinemaddict {
     .then((films) => {
       if (films.length) {
         this._films[List.MAIN] = films.slice().map((film) => new Film(film));
+        this._filmsUnsort = this._films[List.MAIN].slice();
+
         this._getTopRatedFilms();
         this._getMostCommentedFilms();
 
@@ -84,12 +99,33 @@ export default class Cinemaddict {
   _updateBaseTemplate() {
     this._renderProfile();
 
-    this._filter.filters = generateFilters(this._films[List.MAIN]);
-
     removeComponent(this._loading);
     renderComponent(this._entryNodes.main, this._sort);
     renderComponent(this._entryNodes.main, this._mainContainer);
 
+    this._sort.setHandlers();
+    this._filter.filters = generateFilters(this._films[List.MAIN]);
     this._statistic.totalFilms = this._films[List.MAIN].length;
+  }
+
+  _updateList() {
+    removeComponent(this._mainContainer);
+    renderComponent(this._entryNodes.main, this._mainContainer);
+    this._renderFilmsList();
+  }
+
+  _sortFilms(sortType) {
+    switch (sortType) {
+      case Sorts.DATE:
+        this._films[List.MAIN]
+          .sort((a, b) => a.info.releaseDate > b.info.releaseDate);
+        break;
+      case Sorts.RATING:
+        this._films[List.MAIN]
+          .sort((a, b) => a.info.rating < b.info.rating);
+        break;
+      default:
+        this._films[List.MAIN] = this._filmsUnsort.slice();
+    }
   }
 }

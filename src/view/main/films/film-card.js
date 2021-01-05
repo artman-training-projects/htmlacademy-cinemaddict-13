@@ -33,7 +33,6 @@ export default class FilmCard extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
-    this._popup = new FilmPopup();
 
     this._updateCard = this._updateCard.bind(this);
   }
@@ -53,6 +52,8 @@ export default class FilmCard extends AbstractView {
   }
 
   _setOpenPopupHandlers() {
+    this._popup = new FilmPopup();
+
     this.getElement().querySelector(`.film-card__title`)
       .addEventListener(`click`, () => {
         this._popup.updateCard = this._updateCard;

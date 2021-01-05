@@ -20,3 +20,4 @@ export function getFormattedRunTime(minutes) {
 
   return time.join(` `);
 }
+
