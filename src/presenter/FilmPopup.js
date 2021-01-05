@@ -13,9 +13,10 @@ export default class FilmPopup {
     }
 
     this._container = document.body;
-    this._film = {};
+    this._film = null;
     this._isShow = false;
 
+    this._updateCard = null;
     this._popupForm = null;
     this._popupInfo = null;
     this._popupComments = null;
@@ -24,6 +25,10 @@ export default class FilmPopup {
     this._updatePopup = this._updatePopup.bind(this);
     this._onClosePopupKeydown = this._onClosePopupKeydown.bind(this);
     this.close = this.close.bind(this);
+  }
+
+  set updateCard(updater) {
+    this._updateCard = updater;
   }
 
   open(film) {
@@ -59,7 +64,7 @@ export default class FilmPopup {
 
   _renderPopup() {
     this._popupForm = new PopupForm();
-    this._popupInfo = new PopupInfo(this._film);
+    this._popupInfo = new PopupInfo(this._film, this._updateCard);
     this._popupComments = new PopupComments(this._film);
 
     renderComponent(this._container, this._popupForm);

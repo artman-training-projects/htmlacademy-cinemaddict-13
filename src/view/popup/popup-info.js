@@ -82,9 +82,10 @@ const createPopupInfoTemplate = (film) => {
 };
 
 export default class PopupInfo extends AbstractView {
-  constructor(film) {
+  constructor(film, updateCard) {
     super();
     this._film = film;
+    this._updateCard = updateCard;
     this._popup = new FilmPopup();
   }
 
@@ -103,6 +104,7 @@ export default class PopupInfo extends AbstractView {
   }
 
   _updateInfo() {
+    this._updateCard();
     this.updateElement();
     this.setHandlers();
   }
