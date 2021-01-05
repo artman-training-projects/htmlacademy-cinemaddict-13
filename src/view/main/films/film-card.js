@@ -37,17 +37,50 @@ export default class FilmCard extends AbstractView {
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._film);
+    return createFilmCardTemplate(this._film.info);
   }
 
-  setShowPopupHandlers() {
+  setHandlers() {
+    this._setOpenPopupHandlers();
+    this._setControlsHandlers();
+  }
+
+  _updateCard() {
+    this.updateElement();
+    this.setHandlers();
+  }
+
+  _setOpenPopupHandlers() {
     this.getElement().querySelector(`.film-card__title`)
-      .addEventListener(`click`, () => this._popup.open(this._film));
+    .addEventListener(`click`, () => this._popup.open(this._film));
 
     this.getElement().querySelector(`.film-card__poster`)
-      .addEventListener(`click`, () => this._popup.open(this._film));
+    .addEventListener(`click`, () => this._popup.open(this._film));
 
     this.getElement().querySelector(`.film-card__comments`)
-      .addEventListener(`click`, () => this._popup.open(this._film));
+    .addEventListener(`click`, () => this._popup.open(this._film));
+  }
+
+  _setControlsHandlers() {
+    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isInWatchlist = !this._film.isInWatchlist;
+        this._updateCard();
+      });
+
+    this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isWatched = !this._film.isWatched;
+        this._updateCard();
+      });
+
+    this.getElement().querySelector(`.film-card__controls-item--favorite`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isFavorite = !this._film.isFavorite;
+        this._updateCard();
+      });
   }
 }

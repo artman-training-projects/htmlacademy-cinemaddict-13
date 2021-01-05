@@ -1,5 +1,6 @@
 import {List, Message, ShownFilms} from "../consts";
 import {getFilmsFromServer} from "../api/api";
+import Film from "../api/film";
 import {removeComponent, renderComponent} from "../render";
 
 import FilmList from "./FilmList";
@@ -33,7 +34,7 @@ export default class Cinemaddict {
     getFilmsFromServer()
     .then((films) => {
       if (films.length) {
-        this._films[List.MAIN] = films.slice();
+        this._films[List.MAIN] = films.slice().map((film) => new Film(film));
         this._getTopRatedFilms();
         this._getMostCommentedFilms();
 
@@ -75,7 +76,7 @@ export default class Cinemaddict {
   }
 
   _renderProfile() {
-    const watchedFilms = this._films[List.MAIN].filter((film) => film.watched).length;
+    const watchedFilms = this._films[List.MAIN].filter((film) => film.isWatched).length;
     this._profile.watchedFilms = watchedFilms;
     renderComponent(this._entryNodes.header, this._profile);
   }

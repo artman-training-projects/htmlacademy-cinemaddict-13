@@ -62,17 +62,17 @@ const createPopupCommentsTemplate = (comments) => {
 };
 
 export default class PopupComments extends AbstractView {
-  constructor(comments) {
+  constructor(film) {
     super();
-    this._comments = comments;
+    this._film = film;
   }
 
-  set comments(comments) {
-    this._comments = comments;
+  set film(film) {
+    this._film = film;
     this.updateElement();
   }
 
   getTemplate() {
-    return createPopupCommentsTemplate(this._comments);
+    return createPopupCommentsTemplate(this._film.info.comments);
   }
 }

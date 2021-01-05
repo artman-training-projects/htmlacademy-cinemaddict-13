@@ -94,11 +94,44 @@ export default class PopupInfo extends AbstractView {
   }
 
   getTemplate() {
-    return createPopupInfoTemplate(this._film);
+    return createPopupInfoTemplate(this._film.info);
   }
 
-  setClosePopupButtonHandler() {
+  setHandlers() {
+    this._setClosePopupButtonHandler();
+    this._setControlsHandlers();
+  }
+
+  _updateInfo() {
+    this.updateElement();
+    this.setHandlers();
+  }
+
+  _setClosePopupButtonHandler() {
     this.getElement().querySelector(`.film-details__close-btn`)
      .addEventListener(`click`, () => this._popup.close());
+  }
+
+  _setControlsHandlers() {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isInWatchlist = !this._film.isInWatchlist;
+        this._updateInfo();
+      });
+
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isWatched = !this._film.isWatched;
+        this._updateInfo();
+      });
+
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isFavorite = !this._film.isFavorite;
+        this._updateInfo();
+      });
   }
 }

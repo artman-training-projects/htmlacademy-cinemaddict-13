@@ -30,6 +30,7 @@ export default class AbstractView {
       replaceElement(this._element, this._newElement);
     }
 
+    this._element = this._newElement;
     this._newElement = null;
   }
 

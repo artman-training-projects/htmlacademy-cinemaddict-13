@@ -20,7 +20,7 @@ export default class FilmList {
   }
 
   set films(films) {
-    this._films = films.slice();
+    this._films = films;
   }
 
   render(container) {
@@ -48,7 +48,7 @@ export default class FilmList {
     films.forEach((film) => {
       const filmCard = new FilmCard(film);
       renderComponent(this._filmListContent, filmCard);
-      filmCard.setShowPopupHandlers();
+      filmCard.setHandlers();
     });
   }
 
