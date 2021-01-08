@@ -14,7 +14,7 @@ export default class FilmPopup {
 
     this._container = document.body;
     this._film = null;
-    this._isShow = false;
+    this._isShown = false;
 
     this._updateCard = null;
     this._popupForm = null;
@@ -27,14 +27,16 @@ export default class FilmPopup {
     this.close = this.close.bind(this);
   }
 
-  set updateCard(updater) {
-    this._updateCard = updater;
+  set film(film) {
+    this._film = film;
   }
 
-  open(film) {
-    this._film = film;
+  set updateCard(callback) {
+    this._updateCard = callback;
+  }
 
-    if (this._isShow) {
+  open() {
+    if (this._isShown) {
       this._updatePopup();
     } else {
       this._showPopup();
@@ -42,7 +44,7 @@ export default class FilmPopup {
   }
 
   close() {
-    this._isShow = false;
+    this._isShown = false;
     this._popupForm.getElement().remove();
 
     this._container.removeEventListener(`keydown`, this._onClosePopupKeydown);
@@ -50,7 +52,7 @@ export default class FilmPopup {
   }
 
   _showPopup() {
-    this._isShow = true;
+    this._isShown = true;
     this._renderPopup();
 
     this._container.addEventListener(`keydown`, this._onClosePopupKeydown);

@@ -53,7 +53,7 @@ export default class Sort extends AbstractView {
 
       evt.preventDefault();
       this._sortType = selectedSortType;
-      new Cinemaddict().sortType = selectedSortType;
+      new Cinemaddict().instance.changeSort(selectedSortType);
       this._updateSort();
     });
   }

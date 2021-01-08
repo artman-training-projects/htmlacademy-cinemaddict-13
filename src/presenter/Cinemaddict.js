@@ -35,15 +35,22 @@ export default class Cinemaddict {
     this._mainContainer = new MainContainer();
   }
 
-  set sortType(type) {
+  get instance() {
+    return this;
+  }
+
+  init() {
+    this._renderBaseTemplate();
+    this._getFilms();
+  }
+
+  changeSort(type) {
     this._currentSortType = type;
     this._sortFilms(type);
     this._updateList();
   }
 
-  init() {
-    this._renderBaseTemplate();
-
+  _getFilms() {
     getFilmsFromServer()
     .then((films) => {
       if (films.length) {
@@ -59,8 +66,8 @@ export default class Cinemaddict {
         this._loading.message = Message.NO_FILM;
       }
     })
-    .catch((err) => {
-      this._loading.message = err;
+    .catch((error) => {
+      this._loading.message = error;
     });
   }
 
@@ -75,9 +82,9 @@ export default class Cinemaddict {
   }
 
   _renderBaseTemplate() {
-    renderComponent(this._entryNodes.main, this._filter);
-    renderComponent(this._entryNodes.main, this._loading);
-    renderComponent(this._entryNodes.footer, this._statistic);
+    renderComponent(this._entryNodes.MAIN, this._filter);
+    renderComponent(this._entryNodes.MAIN, this._loading);
+    renderComponent(this._entryNodes.FOOTER, this._statistic);
   }
 
   _renderFilmsList() {
@@ -93,24 +100,24 @@ export default class Cinemaddict {
   _renderProfile() {
     const watchedFilms = this._films[List.MAIN].filter((film) => film.isWatched).length;
     this._profile.watchedFilms = watchedFilms;
-    renderComponent(this._entryNodes.header, this._profile);
+    renderComponent(this._entryNodes.HEADER, this._profile);
   }
 
   _updateBaseTemplate() {
     this._renderProfile();
 
     removeComponent(this._loading);
-    renderComponent(this._entryNodes.main, this._sort);
-    renderComponent(this._entryNodes.main, this._mainContainer);
+    renderComponent(this._entryNodes.MAIN, this._sort);
+    renderComponent(this._entryNodes.MAIN, this._mainContainer);
 
     this._sort.setHandlers();
     this._filter.filters = generateFilters(this._films[List.MAIN]);
-    this._statistic.totalFilms = this._films[List.MAIN].length;
+    this._statistic.totalFilms(this._films[List.MAIN].length);
   }
 
   _updateList() {
     removeComponent(this._mainContainer);
-    renderComponent(this._entryNodes.main, this._mainContainer);
+    renderComponent(this._entryNodes.MAIN, this._mainContainer);
     this._renderFilmsList();
   }
 
