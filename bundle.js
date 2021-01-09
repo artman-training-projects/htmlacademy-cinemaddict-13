@@ -417,10 +417,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const EntryNodes = {
-  body: document.body,
-  header: document.body.querySelector(`.header`),
-  main: document.body.querySelector(`.main`),
-  footer: document.body.querySelector(`.footer__statistics`),
+  BODY: document.body,
+  HEADER: document.body.querySelector(`.header`),
+  MAIN: document.body.querySelector(`.main`),
+  FOOTER: document.body.querySelector(`.footer__statistics`),
 };
 
 const cinemaddict = new _presenter_Cinemaddict__WEBPACK_IMPORTED_MODULE_0__["default"](EntryNodes);
@@ -603,12 +603,6 @@ class Cinemaddict {
     this._mainContainer = new _view_main_main_container__WEBPACK_IMPORTED_MODULE_10__["default"]();
   }
 
-  set sortType(type) {
-    this._currentSortType = type;
-    this._sortFilms(type);
-    this._updateList();
-  }
-
   init() {
     this._renderBaseTemplate();
 
@@ -627,9 +621,15 @@ class Cinemaddict {
         this._loading.message = _consts__WEBPACK_IMPORTED_MODULE_0__["Message"].NO_FILM;
       }
     })
-    .catch((err) => {
-      this._loading.message = err;
+    .catch((error) => {
+      this._loading.message = error;
     });
+  }
+
+  changeSort(type) {
+    this._currentSortType = type;
+    this._sortFilms(type);
+    this._updateList();
   }
 
   _getTopRatedFilms() {
@@ -643,9 +643,9 @@ class Cinemaddict {
   }
 
   _renderBaseTemplate() {
-    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.main, this._filter);
-    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.main, this._loading);
-    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.footer, this._statistic);
+    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.MAIN, this._filter);
+    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.MAIN, this._loading);
+    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.FOOTER, this._statistic);
   }
 
   _renderFilmsList() {
@@ -661,24 +661,24 @@ class Cinemaddict {
   _renderProfile() {
     const watchedFilms = this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN].filter((film) => film.isWatched).length;
     this._profile.watchedFilms = watchedFilms;
-    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.header, this._profile);
+    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.HEADER, this._profile);
   }
 
   _updateBaseTemplate() {
     this._renderProfile();
 
     Object(_render__WEBPACK_IMPORTED_MODULE_3__["removeComponent"])(this._loading);
-    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.main, this._sort);
-    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.main, this._mainContainer);
+    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.MAIN, this._sort);
+    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.MAIN, this._mainContainer);
 
     this._sort.setHandlers();
     this._filter.filters = Object(_view_nav_filter__WEBPACK_IMPORTED_MODULE_6__["generateFilters"])(this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN]);
-    this._statistic.totalFilms = this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN].length;
+    this._statistic.totalFilms(this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN].length);
   }
 
   _updateList() {
     Object(_render__WEBPACK_IMPORTED_MODULE_3__["removeComponent"])(this._mainContainer);
-    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.main, this._mainContainer);
+    Object(_render__WEBPACK_IMPORTED_MODULE_3__["renderComponent"])(this._entryNodes.MAIN, this._mainContainer);
     this._renderFilmsList();
   }
 
@@ -824,7 +824,7 @@ class FilmPopup {
 
     this._container = document.body;
     this._film = null;
-    this._isShow = false;
+    this._isShown = false;
 
     this._updateCard = null;
     this._popupForm = null;
@@ -837,14 +837,14 @@ class FilmPopup {
     this.close = this.close.bind(this);
   }
 
-  set updateCard(updater) {
-    this._updateCard = updater;
+  set updateCard(callback) {
+    this._updateCard = callback;
   }
 
   open(film) {
     this._film = film;
 
-    if (this._isShow) {
+    if (this._isShown) {
       this._updatePopup();
     } else {
       this._showPopup();
@@ -852,7 +852,7 @@ class FilmPopup {
   }
 
   close() {
-    this._isShow = false;
+    this._isShown = false;
     this._popupForm.getElement().remove();
 
     this._container.removeEventListener(`keydown`, this._onClosePopupKeydown);
@@ -860,7 +860,7 @@ class FilmPopup {
   }
 
   _showPopup() {
-    this._isShow = true;
+    this._isShown = true;
     this._renderPopup();
 
     this._container.addEventListener(`keydown`, this._onClosePopupKeydown);
@@ -1090,7 +1090,7 @@ class Statistic extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this._amount = amount;
   }
 
-  set totalFilms(amount) {
+  totalFilms(amount) {
     this._amount = amount;
     this.updateElement();
   }
@@ -1262,6 +1262,7 @@ class FilmCard extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
     this._film = film;
 
     this._updateCard = this._updateCard.bind(this);
+    this._openPopupHandler = this._openPopupHandler.bind(this);
   }
 
   getTemplate() {
@@ -1282,22 +1283,13 @@ class FilmCard extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
     this._popup = new _presenter_FilmPopup__WEBPACK_IMPORTED_MODULE_4__["default"]();
 
     this.getElement().querySelector(`.film-card__title`)
-      .addEventListener(`click`, () => {
-        this._popup.updateCard = this._updateCard;
-        this._popup.open(this._film);
-      });
+      .addEventListener(`click`, this._openPopupHandler);
 
     this.getElement().querySelector(`.film-card__poster`)
-      .addEventListener(`click`, () => {
-        this._popup.updateCard = this._updateCard;
-        this._popup.open(this._film);
-      });
+      .addEventListener(`click`, this._openPopupHandler);
 
     this.getElement().querySelector(`.film-card__comments`)
-      .addEventListener(`click`, () => {
-        this._popup.updateCard = this._updateCard;
-        this._popup.open(this._film);
-      });
+      .addEventListener(`click`, this._openPopupHandler);
   }
 
   _setControlsHandlers() {
@@ -1321,6 +1313,11 @@ class FilmCard extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
         this._film.isFavorite = !this._film.isFavorite;
         this._updateCard();
       });
+  }
+
+  _openPopupHandler() {
+    this._popup.updateCard = this._updateCard;
+    this._popup.open(this._film);
   }
 }
 
@@ -1998,7 +1995,7 @@ class Sort extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
       evt.preventDefault();
       this._sortType = selectedSortType;
-      new _presenter_Cinemaddict__WEBPACK_IMPORTED_MODULE_2__["default"]().sortType = selectedSortType;
+      new _presenter_Cinemaddict__WEBPACK_IMPORTED_MODULE_2__["default"]().changeSort(selectedSortType);
       this._updateSort();
     });
   }
