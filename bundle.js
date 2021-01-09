@@ -837,13 +837,15 @@ class FilmPopup {
     this.close = this.close.bind(this);
   }
 
+  set film(film) {
+    this._film = film;
+  }
+
   set updateCard(callback) {
     this._updateCard = callback;
   }
 
-  open(film) {
-    this._film = film;
-
+  open() {
     if (this._isShown) {
       this._updatePopup();
     } else {
@@ -1316,8 +1318,9 @@ class FilmCard extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
   }
 
   _openPopupHandler() {
+    this._popup.film = this._film;
     this._popup.updateCard = this._updateCard;
-    this._popup.open(this._film);
+    this._popup.open();
   }
 }
 
