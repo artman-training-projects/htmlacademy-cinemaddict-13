@@ -603,9 +603,22 @@ class Cinemaddict {
     this._mainContainer = new _view_main_main_container__WEBPACK_IMPORTED_MODULE_10__["default"]();
   }
 
+  get instance() {
+    return this;
+  }
+
   init() {
     this._renderBaseTemplate();
+    this._getFilms();
+  }
 
+  changeSort(type) {
+    this._currentSortType = type;
+    this._sortFilms(type);
+    this._updateList();
+  }
+
+  _getFilms() {
     Object(_api_api__WEBPACK_IMPORTED_MODULE_1__["getFilmsFromServer"])()
     .then((films) => {
       if (films.length) {
@@ -624,12 +637,6 @@ class Cinemaddict {
     .catch((error) => {
       this._loading.message = error;
     });
-  }
-
-  changeSort(type) {
-    this._currentSortType = type;
-    this._sortFilms(type);
-    this._updateList();
   }
 
   _getTopRatedFilms() {
@@ -1998,7 +2005,7 @@ class Sort extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
 
       evt.preventDefault();
       this._sortType = selectedSortType;
-      new _presenter_Cinemaddict__WEBPACK_IMPORTED_MODULE_2__["default"]().changeSort(selectedSortType);
+      new _presenter_Cinemaddict__WEBPACK_IMPORTED_MODULE_2__["default"]().instance.changeSort(selectedSortType);
       this._updateSort();
     });
   }
