@@ -582,12 +582,6 @@ __webpack_require__.r(__webpack_exports__);
 
 class Cinemaddict {
   constructor(entryNodes) {
-    if (!new.target.instance) {
-      new.target.instance = this;
-    } else {
-      return new.target.instance;
-    }
-
     this._entryNodes = entryNodes;
     this._films = {};
     this._filmsUnsort = {};
@@ -599,12 +593,8 @@ class Cinemaddict {
     this._loading = new _view_main_films_loading__WEBPACK_IMPORTED_MODULE_9__["default"]();
 
     this._stats = new _view_nav_stats__WEBPACK_IMPORTED_MODULE_7__["default"]();
-    this._sort = new _view_sort__WEBPACK_IMPORTED_MODULE_8__["default"]();
+    this._sort = new _view_sort__WEBPACK_IMPORTED_MODULE_8__["default"](this);
     this._mainContainer = new _view_main_main_container__WEBPACK_IMPORTED_MODULE_10__["default"]();
-  }
-
-  get instance() {
-    return this;
   }
 
   init() {
@@ -614,7 +604,7 @@ class Cinemaddict {
 
   changeSort(type) {
     this._currentSortType = type;
-    this._sortFilms(type);
+    this._sortFilms();
     this._updateList();
   }
 
@@ -680,7 +670,7 @@ class Cinemaddict {
 
     this._sort.setHandlers();
     this._filter.filters = Object(_view_nav_filter__WEBPACK_IMPORTED_MODULE_6__["generateFilters"])(this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN]);
-    this._statistic.totalFilms(this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN].length);
+    this._statistic.totalFilms = this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN].length;
   }
 
   _updateList() {
@@ -689,8 +679,8 @@ class Cinemaddict {
     this._renderFilmsList();
   }
 
-  _sortFilms(sortType) {
-    switch (sortType) {
+  _sortFilms() {
+    switch (this._currentSortType) {
       case _consts__WEBPACK_IMPORTED_MODULE_0__["Sorts"].DATE:
         this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN]
           .sort((a, b) => a.info.releaseDate > b.info.releaseDate);
@@ -1099,7 +1089,7 @@ class Statistic extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this._amount = amount;
   }
 
-  totalFilms(amount) {
+  set totalFilms(amount) {
     this._amount = amount;
     this.updateElement();
   }
@@ -1242,7 +1232,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const createFilmCardTemplate = (film) => {
   const showDescription = (description) => description.length >= _consts__WEBPACK_IMPORTED_MODULE_2__["MAX_DESCRIPTION_LENGTH"] ? `${description.slice(0, _consts__WEBPACK_IMPORTED_MODULE_2__["MAX_DESCRIPTION_LENGTH"])}...` : description;
-  const getIsActive = (isChecked) => isChecked ? `film-card__controls-item--active` : ``;
+  const setActiveClass = (isChecked) => isChecked ? `film-card__controls-item--active` : ``;
 
   return (
     `<article class="film-card" data-film="${film.id}">
@@ -1257,9 +1247,9 @@ const createFilmCardTemplate = (film) => {
       <p class="film-card__description">${showDescription(film.description)}</p>
       <a class="film-card__comments">${film.comments.length} comments</a>
       <div class="film-card__controls">
-        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${getIsActive(film.watchlist)}" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${getIsActive(film.watched)}" type="button">Mark as watched</button>
-        <button class="film-card__controls-item button film-card__controls-item--favorite ${getIsActive(film.favorite)}" type="button">Mark as favorite</button>
+        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${setActiveClass(film.watchlist)}" type="button">Add to watchlist</button>
+        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${setActiveClass(film.watched)}" type="button">Mark as watched</button>
+        <button class="film-card__controls-item button film-card__controls-item--favorite ${setActiveClass(film.favorite)}" type="button">Mark as favorite</button>
       </div>
     </article>`
   );
@@ -1949,16 +1939,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Sort; });
 /* harmony import */ var _abstractView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./abstractView */ "./src/view/abstractView.js");
 /* harmony import */ var _consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../consts */ "./src/consts.js");
-/* harmony import */ var _presenter_Cinemaddict__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../presenter/Cinemaddict */ "./src/presenter/Cinemaddict.js");
-
 
 
 
 const createMainSortTemplate = (CurrentSortType) => {
-  const isActive = (type) => CurrentSortType === type ? `sort__button--active` : ``;
+  const setActiveClass = (type) => CurrentSortType === type ? `sort__button--active` : ``;
 
   const generateLinks = () => Object.values(_consts__WEBPACK_IMPORTED_MODULE_1__["Sorts"]).map((sortType) => (
-    `<li><a href="#" class="sort__button ${isActive(sortType)}" data-sort-type="${sortType}">${sortType}</a></li>`
+    `<li><a href="#" class="sort__button ${setActiveClass(sortType)}" data-sort-type="${sortType}">${sortType}</a></li>`
   )).join(``);
 
   return (
@@ -1969,13 +1957,12 @@ const createMainSortTemplate = (CurrentSortType) => {
 };
 
 class Sort extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
-  constructor() {
+  constructor(appInstance, sortType = _consts__WEBPACK_IMPORTED_MODULE_1__["Sorts"].DEFAULT) {
     super();
-    this._sortType = _consts__WEBPACK_IMPORTED_MODULE_1__["Sorts"].DEFAULT;
-  }
+    this._appInstance = appInstance;
+    this._sortType = sortType;
 
-  set setType(type) {
-    this._sortType = type;
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
@@ -1983,7 +1970,7 @@ class Sort extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
   }
 
   setHandlers() {
-    this._setSortTypeChangeHandler();
+    this.getElement().addEventListener(`click`, this._sortTypeChangeHandler);
   }
 
   _updateSort() {
@@ -1991,23 +1978,21 @@ class Sort extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
     this.setHandlers();
   }
 
-  _setSortTypeChangeHandler() {
-    this.getElement().addEventListener(`click`, (evt) => {
-      if (evt.target.tagName !== `A`) {
-        return;
-      }
+  _sortTypeChangeHandler(evt) {
+    if (evt.target.tagName !== `A`) {
+      return;
+    }
 
-      const selectedSortType = evt.target.dataset.sortType;
+    const selectedSortType = evt.target.dataset.sortType;
 
-      if (this._sortType === selectedSortType) {
-        return;
-      }
+    if (this._sortType === selectedSortType) {
+      return;
+    }
 
-      evt.preventDefault();
-      this._sortType = selectedSortType;
-      new _presenter_Cinemaddict__WEBPACK_IMPORTED_MODULE_2__["default"]().instance.changeSort(selectedSortType);
-      this._updateSort();
-    });
+    evt.preventDefault();
+    this._sortType = selectedSortType;
+    this._appInstance.changeSort(selectedSortType);
+    this._updateSort();
   }
 }
 
