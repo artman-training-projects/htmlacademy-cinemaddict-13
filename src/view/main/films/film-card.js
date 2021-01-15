@@ -6,7 +6,7 @@ import FilmPopup from "../../../presenter/FilmPopup";
 
 const createFilmCardTemplate = (film) => {
   const showDescription = (description) => description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
-  const getIsActive = (isChecked) => isChecked ? `film-card__controls-item--active` : ``;
+  const setActiveClass = (isChecked) => isChecked ? `film-card__controls-item--active` : ``;
 
   return (
     `<article class="film-card" data-film="${film.id}">
@@ -21,9 +21,9 @@ const createFilmCardTemplate = (film) => {
       <p class="film-card__description">${showDescription(film.description)}</p>
       <a class="film-card__comments">${film.comments.length} comments</a>
       <div class="film-card__controls">
-        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${getIsActive(film.watchlist)}" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${getIsActive(film.watched)}" type="button">Mark as watched</button>
-        <button class="film-card__controls-item button film-card__controls-item--favorite ${getIsActive(film.favorite)}" type="button">Mark as favorite</button>
+        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${setActiveClass(film.watchlist)}" type="button">Add to watchlist</button>
+        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${setActiveClass(film.watched)}" type="button">Mark as watched</button>
+        <button class="film-card__controls-item button film-card__controls-item--favorite ${setActiveClass(film.favorite)}" type="button">Mark as favorite</button>
       </div>
     </article>`
   );

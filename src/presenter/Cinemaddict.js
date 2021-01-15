@@ -14,12 +14,6 @@ import Statistic from "../view/footer/statistic";
 
 export default class Cinemaddict {
   constructor(entryNodes) {
-    if (!new.target.instance) {
-      new.target.instance = this;
-    } else {
-      return new.target.instance;
-    }
-
     this._entryNodes = entryNodes;
     this._films = {};
     this._filmsUnsort = {};
@@ -31,12 +25,8 @@ export default class Cinemaddict {
     this._loading = new FilmsLoading();
 
     this._stats = new Stats();
-    this._sort = new Sort();
+    this._sort = new Sort(this);
     this._mainContainer = new MainContainer();
-  }
-
-  get instance() {
-    return this;
   }
 
   init() {
@@ -46,7 +36,7 @@ export default class Cinemaddict {
 
   changeSort(type) {
     this._currentSortType = type;
-    this._sortFilms(type);
+    this._sortFilms();
     this._updateList();
   }
 
@@ -112,7 +102,7 @@ export default class Cinemaddict {
 
     this._sort.setHandlers();
     this._filter.filters = generateFilters(this._films[List.MAIN]);
-    this._statistic.totalFilms(this._films[List.MAIN].length);
+    this._statistic.totalFilms = this._films[List.MAIN].length;
   }
 
   _updateList() {
@@ -121,8 +111,8 @@ export default class Cinemaddict {
     this._renderFilmsList();
   }
 
-  _sortFilms(sortType) {
-    switch (sortType) {
+  _sortFilms() {
+    switch (this._currentSortType) {
       case Sorts.DATE:
         this._films[List.MAIN]
           .sort((a, b) => a.info.releaseDate > b.info.releaseDate);

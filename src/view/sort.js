@@ -1,12 +1,11 @@
 import AbstractView from "./abstractView";
 import {Sorts} from "../consts";
-import Cinemaddict from "../presenter/Cinemaddict";
 
 const createMainSortTemplate = (CurrentSortType) => {
-  const isActive = (type) => CurrentSortType === type ? `sort__button--active` : ``;
+  const setActiveClass = (type) => CurrentSortType === type ? `sort__button--active` : ``;
 
   const generateLinks = () => Object.values(Sorts).map((sortType) => (
-    `<li><a href="#" class="sort__button ${isActive(sortType)}" data-sort-type="${sortType}">${sortType}</a></li>`
+    `<li><a href="#" class="sort__button ${setActiveClass(sortType)}" data-sort-type="${sortType}">${sortType}</a></li>`
   )).join(``);
 
   return (
@@ -17,13 +16,12 @@ const createMainSortTemplate = (CurrentSortType) => {
 };
 
 export default class Sort extends AbstractView {
-  constructor() {
+  constructor(appInstance, sortType = Sorts.DEFAULT) {
     super();
-    this._sortType = Sorts.DEFAULT;
-  }
+    this._appInstance = appInstance;
+    this._sortType = sortType;
 
-  set setType(type) {
-    this._sortType = type;
+    this._sortTypeChangeHandler = this._sortTypeChangeHandler.bind(this);
   }
 
   getTemplate() {
@@ -31,7 +29,7 @@ export default class Sort extends AbstractView {
   }
 
   setHandlers() {
-    this._setSortTypeChangeHandler();
+    this.getElement().addEventListener(`click`, this._sortTypeChangeHandler);
   }
 
   _updateSort() {
@@ -39,22 +37,20 @@ export default class Sort extends AbstractView {
     this.setHandlers();
   }
 
-  _setSortTypeChangeHandler() {
-    this.getElement().addEventListener(`click`, (evt) => {
-      if (evt.target.tagName !== `A`) {
-        return;
-      }
+  _sortTypeChangeHandler(evt) {
+    if (evt.target.tagName !== `A`) {
+      return;
+    }
 
-      const selectedSortType = evt.target.dataset.sortType;
+    const selectedSortType = evt.target.dataset.sortType;
 
-      if (this._sortType === selectedSortType) {
-        return;
-      }
+    if (this._sortType === selectedSortType) {
+      return;
+    }
 
-      evt.preventDefault();
-      this._sortType = selectedSortType;
-      new Cinemaddict().instance.changeSort(selectedSortType);
-      this._updateSort();
-    });
+    evt.preventDefault();
+    this._sortType = selectedSortType;
+    this._appInstance.changeSort(selectedSortType);
+    this._updateSort();
   }
 }

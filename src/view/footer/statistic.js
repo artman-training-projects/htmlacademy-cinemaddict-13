@@ -12,7 +12,7 @@ export default class Statistic extends AbstractView {
     this._amount = amount;
   }
 
-  totalFilms(amount) {
+  set totalFilms(amount) {
     this._amount = amount;
     this.updateElement();
   }
