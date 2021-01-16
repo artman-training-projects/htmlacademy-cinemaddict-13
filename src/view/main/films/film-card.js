@@ -1,16 +1,12 @@
 import dayjs from "dayjs";
-import {getFormattedRunTime} from "../../../utils";
-import {Keys, MAX_DESCRIPTION_LENGTH} from "../../../consts";
 import AbstractView from "../../abstractView";
-import {renderComponent, RenderPosition} from "../../../render";
-import PopupForm from "../../popup/popup-form";
-import PopupFormTop from "../../popup/popup-form-top";
-import PopupFormBottom from "../../popup/popup-form-bottom";
-import PopupComment from "../../popup/popup-comment";
+import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
+import {getFormattedRunTime} from "../../../utils";
+import FilmPopup from "../../../presenter/FilmPopup";
 
 const createFilmCardTemplate = (film) => {
   const showDescription = (description) => description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
-  const getIsActive = (isChecked) => isChecked ? `film-card__controls-item--active` : ``;
+  const setActiveClass = (isChecked) => isChecked ? `film-card__controls-item--active` : ``;
 
   return (
     `<article class="film-card" data-film="${film.id}">
@@ -25,9 +21,9 @@ const createFilmCardTemplate = (film) => {
       <p class="film-card__description">${showDescription(film.description)}</p>
       <a class="film-card__comments">${film.comments.length} comments</a>
       <div class="film-card__controls">
-        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${getIsActive(film.watchlist)}" type="button">Add to watchlist</button>
-        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${getIsActive(film.watched)}" type="button">Mark as watched</button>
-        <button class="film-card__controls-item button film-card__controls-item--favorite ${getIsActive(film.favorite)}" type="button">Mark as favorite</button>
+        <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${setActiveClass(film.watchlist)}" type="button">Add to watchlist</button>
+        <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${setActiveClass(film.watched)}" type="button">Mark as watched</button>
+        <button class="film-card__controls-item button film-card__controls-item--favorite ${setActiveClass(film.favorite)}" type="button">Mark as favorite</button>
       </div>
     </article>`
   );
@@ -37,65 +33,64 @@ export default class FilmCard extends AbstractView {
   constructor(film) {
     super();
     this._film = film;
-    this._body = document.body;
 
-    this._onOpenPopupClick = this._onOpenPopupClick.bind(this);
-    this._onClosePopupClick = this._onClosePopupClick.bind(this);
-    this._onClosePopupKeydown = this._onClosePopupKeydown.bind(this);
-    this._removeOldPopup = this._removeOldPopup.bind(this);
+    this._updateCard = this._updateCard.bind(this);
+    this._openPopupHandler = this._openPopupHandler.bind(this);
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._film);
+    return createFilmCardTemplate(this._film.info);
   }
 
-  setShowPopupHandler() {
+  setHandlers() {
+    this._setOpenPopupHandlers();
+    this._setControlsHandlers();
+  }
+
+  _updateCard() {
+    this.updateElement();
+    this.setHandlers();
+  }
+
+  _setOpenPopupHandlers() {
+    this._popup = new FilmPopup();
+
     this.getElement().querySelector(`.film-card__title`)
-      .addEventListener(`click`, this._onOpenPopupClick);
+      .addEventListener(`click`, this._openPopupHandler);
 
     this.getElement().querySelector(`.film-card__poster`)
-      .addEventListener(`click`, this._onOpenPopupClick);
+      .addEventListener(`click`, this._openPopupHandler);
 
     this.getElement().querySelector(`.film-card__comments`)
-      .addEventListener(`click`, this._onOpenPopupClick);
+      .addEventListener(`click`, this._openPopupHandler);
   }
 
-  _onOpenPopupClick() {
-    this._removeOldPopup();
+  _setControlsHandlers() {
+    this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isInWatchlist = !this._film.isInWatchlist;
+        this._updateCard();
+      });
 
-    this._body.classList.add(`hide-overflow`);
-    this._popup = new PopupForm().getElement();
-    renderComponent(this._body, this._popup);
+    this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isWatched = !this._film.isWatched;
+        this._updateCard();
+      });
 
-    const popupFormContainer = this._popup.querySelector(`.film-details__inner`);
-    renderComponent(popupFormContainer, new PopupFormTop(this._film));
-    renderComponent(popupFormContainer, new PopupFormBottom(this._film.comments));
-
-    const popupCommentList = popupFormContainer.querySelector(`.film-details__comments-title`);
-    renderComponent(popupCommentList, new PopupComment(this._film.comments), RenderPosition.AFTEREND);
-
-    const closeButton = this._popup.querySelector(`.film-details__close-btn`);
-    closeButton.addEventListener(`click`, this._onClosePopupClick);
-    this._body.addEventListener(`keydown`, this._onClosePopupKeydown);
-
+    this.getElement().querySelector(`.film-card__controls-item--favorite`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isFavorite = !this._film.isFavorite;
+        this._updateCard();
+      });
   }
 
-  _onClosePopupKeydown(evt) {
-    if (evt.key === Keys.ESCAPE) {
-      this._onClosePopupClick();
-    }
-  }
-
-  _onClosePopupClick() {
-    this._popup.remove();
-    this._body.removeEventListener(`keydown`, this._onClosePopupKeydown);
-    this._body.classList.remove(`hide-overflow`);
-  }
-
-  _removeOldPopup() {
-    const oldPopup = this._body.querySelector(`.film-details`);
-    if (oldPopup) {
-      oldPopup.remove();
-    }
+  _openPopupHandler() {
+    this._popup.film = this._film;
+    this._popup.updateCard = this._updateCard;
+    this._popup.open();
   }
 }

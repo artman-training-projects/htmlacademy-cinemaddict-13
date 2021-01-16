@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
 import AbstractView from "../abstractView";
 import {getFormattedRunTime} from "../../utils";
+import FilmPopup from "../../presenter/FilmPopup";
 
-const createPopupFormTopTemplate = (film) => {
+const createPopupInfoTemplate = (film) => {
   const getIsActive = (isChecked) => isChecked ? `checked` : ``;
 
   return (
@@ -80,13 +81,59 @@ const createPopupFormTopTemplate = (film) => {
   );
 };
 
-export default class PopupFormTop extends AbstractView {
-  constructor(film) {
+export default class PopupInfo extends AbstractView {
+  constructor(film, updateCard) {
     super();
     this._film = film;
+    this._updateCard = updateCard;
+    this._popup = new FilmPopup();
+  }
+
+  set film(film) {
+    this._film = film;
+    this.updateElement();
   }
 
   getTemplate() {
-    return createPopupFormTopTemplate(this._film);
+    return createPopupInfoTemplate(this._film.info);
+  }
+
+  setHandlers() {
+    this._setClosePopupButtonHandler();
+    this._setControlsHandlers();
+  }
+
+  _updateInfo() {
+    this._updateCard();
+    this.updateElement();
+    this.setHandlers();
+  }
+
+  _setClosePopupButtonHandler() {
+    this.getElement().querySelector(`.film-details__close-btn`)
+     .addEventListener(`click`, () => this._popup.close());
+  }
+
+  _setControlsHandlers() {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isInWatchlist = !this._film.isInWatchlist;
+        this._updateInfo();
+      });
+
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isWatched = !this._film.isWatched;
+        this._updateInfo();
+      });
+
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._film.isFavorite = !this._film.isFavorite;
+        this._updateInfo();
+      });
   }
 }

@@ -33,9 +33,14 @@ const createHeaderProfileTemplate = (watchedFilms) => {
 };
 
 export default class Profile extends AbstractView {
-  constructor(watchedFilms) {
+  constructor(watchedFilms = 0) {
     super();
     this._watchedFilms = watchedFilms;
+  }
+
+  set watchedFilms(films) {
+    this._watchedFilms = films;
+    this.updateElement();
   }
 
   getTemplate() {

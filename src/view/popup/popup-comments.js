@@ -1,11 +1,31 @@
+import dayjs from "dayjs";
 import AbstractView from "../abstractView";
 
-const createPopupFormBottomTemplate = (comments) => {
+const createPopupCommentsTemplate = (comments) => {
+  const markupComments = comments.map((comment) => (
+    `<li class="film-details__comment">
+      <span class="film-details__comment-emoji">
+        <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
+      </span>
+      <div>
+        <p class="film-details__comment-text">${comment.comment}</p>
+        <p class="film-details__comment-info">
+          <span class="film-details__comment-author">${comment.author}</span>
+          <span class="film-details__comment-day">${dayjs(comment.date).format(`YYYY/MM/DD HH:mm`)}</span>
+          <button class="film-details__comment-delete">Delete</button>
+        </p>
+      </div>
+    </li>`
+  )).join(``);
+
   return (
     `<div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
         <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
 
+        <ul class="film-details__comments-list">
+          ${markupComments}
+        </ul>
 
         <div class="film-details__new-comment">
           <div class="film-details__add-emoji-label"></div>
@@ -41,13 +61,18 @@ const createPopupFormBottomTemplate = (comments) => {
   );
 };
 
-export default class PopupFormBottom extends AbstractView {
-  constructor(comments) {
+export default class PopupComments extends AbstractView {
+  constructor(film) {
     super();
-    this._comments = comments;
+    this._film = film;
+  }
+
+  set film(film) {
+    this._film = film;
+    this.updateElement();
   }
 
   getTemplate() {
-    return createPopupFormBottomTemplate(this._comments);
+    return createPopupCommentsTemplate(this._film.info.comments);
   }
 }

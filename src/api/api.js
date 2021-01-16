@@ -1,7 +1,7 @@
 import {getRandomizedFilm} from "../mock/films";
 import {getRandomNumber} from "../utils";
 
-const FRACTION = {
+const Fraction = {
   FILL: 0.4,
   EMPTY: 0.2,
 };
@@ -9,15 +9,15 @@ const FRACTION = {
 const films = (() => {
   const random = Math.random();
 
-  if (random > FRACTION.FILL) {
+  if (random > Fraction.FILL) {
     return new Array(getRandomNumber(20, 15)).fill(``).map(getRandomizedFilm);
   }
 
-  if (random > FRACTION.EMPTY) {
+  if (random > Fraction.EMPTY) {
     return [];
   }
 
-  return null;
+  return false;
 })();
 
 export const getFilmsFromServer = () => new Promise((resolve, reject) => {

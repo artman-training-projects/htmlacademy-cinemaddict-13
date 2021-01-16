@@ -1,4 +1,4 @@
-import {createElement} from "../render";
+import {createElement, replaceElement} from "../render";
 
 export default class AbstractView {
   constructor() {
@@ -7,6 +7,7 @@ export default class AbstractView {
     }
 
     this._element = null;
+    this._newElement = null;
     this._callbacks = {};
   }
 
@@ -20,6 +21,17 @@ export default class AbstractView {
     }
 
     return this._element;
+  }
+
+  updateElement() {
+    this._newElement = createElement(this.getTemplate());
+
+    if (this._element) {
+      replaceElement(this._element, this._newElement);
+    }
+
+    this._element = this._newElement;
+    this._newElement = null;
   }
 
   removeElement() {

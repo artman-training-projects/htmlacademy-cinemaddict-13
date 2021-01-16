@@ -16,8 +16,18 @@ export const Filters = {
   FAVORITES: `Favorites`,
 };
 
+export const Sorts = {
+  DEFAULT: `Sort by default`,
+  DATE: `Sort by date`,
+  RATING: `Sort by rating`
+};
+
 export const MAX_DESCRIPTION_LENGTH = 139;
 
 export const Keys = {
   ESCAPE: `Escape`
+};
+
+export const Message = {
+  NO_FILM: `There are no movies in our database`,
 };
