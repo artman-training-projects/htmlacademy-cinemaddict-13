@@ -1,8 +1,8 @@
 import AbstractView from "./abstractView";
 import {Sorts} from "../consts";
 
-const createMainSortTemplate = (CurrentSortType) => {
-  const setActiveClass = (type) => CurrentSortType === type ? `sort__button--active` : ``;
+const createMainSortTemplate = (currentSortType) => {
+  const setActiveClass = (type) => currentSortType === type ? `sort__button--active` : ``;
 
   const generateLinks = () => Object.values(Sorts).map((sortType) => (
     `<li><a href="#" class="sort__button ${setActiveClass(sortType)}" data-sort-type="${sortType}">${sortType}</a></li>`

@@ -63,12 +63,12 @@ export default class Cinemaddict {
 
   _getTopRatedFilms() {
     this._films[List.TOP_RATED] = this._films[List.MAIN].slice()
-      .sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
+      .sort((a, b) => b.rating - a.rating).slice(0, ShownFilms.EXTRA);
   }
 
   _getMostCommentedFilms() {
     this._films[List.MOST_COMMENTED] = this._films[List.MAIN].slice()
-      .sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
+      .sort((a, b) => b.comments.length - a.comments.length).slice(0, ShownFilms.EXTRA);
   }
 
   _renderBaseTemplate() {
@@ -115,11 +115,11 @@ export default class Cinemaddict {
     switch (this._currentSortType) {
       case Sorts.DATE:
         this._films[List.MAIN]
-          .sort((a, b) => a.info.releaseDate > b.info.releaseDate);
+          .sort((a, b) => new Date(a.info.releaseDate) - new Date(b.info.releaseDate));
         break;
       case Sorts.RATING:
         this._films[List.MAIN]
-          .sort((a, b) => a.info.rating < b.info.rating);
+          .sort((a, b) => b.info.rating - a.info.rating);
         break;
       default:
         this._films[List.MAIN] = this._filmsUnsort.slice();

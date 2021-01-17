@@ -27,6 +27,10 @@ export default class Film {
     return this._film.comments;
   }
 
+  get releaseDate() {
+    return this._film.releaseDate;
+  }
+
   set isInWatchlist(bool) {
     this._film.watchlist = bool;
   }
