@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import AbstractView from "../abstractView";
+import SmartView from "../smartView";
 
 const createPopupCommentsTemplate = (comments) => {
   const markupComments = comments.map((comment) => (
@@ -61,7 +62,7 @@ const createPopupCommentsTemplate = (comments) => {
   );
 };
 
-export default class PopupComments extends AbstractView {
+export default class PopupComments extends SmartView {
   constructor(film) {
     super();
     this._film = film;

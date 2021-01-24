@@ -1,5 +1,5 @@
-import AbstractView from "./abstractView";
 import {Sorts} from "../consts";
+import SmartView from "./smartView";
 
 const createMainSortTemplate = (currentSortType) => {
   const setActiveClass = (type) => currentSortType === type ? `sort__button--active` : ``;
@@ -15,7 +15,7 @@ const createMainSortTemplate = (currentSortType) => {
   );
 };
 
-export default class Sort extends AbstractView {
+export default class Sort extends SmartView {
   constructor(appInstance, sortType = Sorts.DEFAULT) {
     super();
     this._appInstance = appInstance;

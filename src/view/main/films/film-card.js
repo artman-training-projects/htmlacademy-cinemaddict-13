@@ -1,8 +1,8 @@
 import dayjs from "dayjs";
-import AbstractView from "../../abstractView";
 import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
 import {getFormattedRunTime} from "../../../utils";
 import FilmPopup from "../../../presenter/FilmPopup";
+import SmartView from "../../smartView";
 
 const createFilmCardTemplate = (film) => {
   const showDescription = (description) => description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
@@ -29,7 +29,7 @@ const createFilmCardTemplate = (film) => {
   );
 };
 
-export default class FilmCard extends AbstractView {
+export default class FilmCard extends SmartView {
   constructor(film) {
     super();
     this._film = film;

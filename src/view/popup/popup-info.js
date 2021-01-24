@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import AbstractView from "../abstractView";
 import {getFormattedRunTime} from "../../utils";
 import FilmPopup from "../../presenter/FilmPopup";
+import SmartView from "../smartView";
 
 const createPopupInfoTemplate = (film) => {
   const getIsActive = (isChecked) => isChecked ? `checked` : ``;
@@ -81,7 +82,7 @@ const createPopupInfoTemplate = (film) => {
   );
 };
 
-export default class PopupInfo extends AbstractView {
+export default class PopupInfo extends SmartView {
   constructor(film, updateCard) {
     super();
     this._film = film;

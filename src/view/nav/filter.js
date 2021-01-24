@@ -1,5 +1,5 @@
-import AbstractView from "../abstractView";
 import {Filters} from "../../consts";
+import SmartView from "../smartView";
 
 const initFilter = {
   [Filters.ALL]: null,
@@ -42,7 +42,7 @@ const createMainFilterTemplate = (filters) => {
   );
 };
 
-export default class Filter extends AbstractView {
+export default class Filter extends SmartView {
   constructor(filters = initFilter) {
     super();
     this._filters = filters;
