@@ -335,6 +335,10 @@ class Film {
     return this._film.comments;
   }
 
+  get releaseDate() {
+    return this._film.releaseDate;
+  }
+
   set isInWatchlist(bool) {
     this._film.watchlist = bool;
   }
@@ -631,12 +635,12 @@ class Cinemaddict {
 
   _getTopRatedFilms() {
     this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].TOP_RATED] = this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN].slice()
-      .sort((a, b) => a.rating < b.rating).slice(0, _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].EXTRA);
+      .sort((a, b) => b.rating - a.rating).slice(0, _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].EXTRA);
   }
 
   _getMostCommentedFilms() {
     this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MOST_COMMENTED] = this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN].slice()
-      .sort((a, b) => a.comments.length < b.comments.length).slice(0, _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].EXTRA);
+      .sort((a, b) => b.comments.length - a.comments.length).slice(0, _consts__WEBPACK_IMPORTED_MODULE_0__["ShownFilms"].EXTRA);
   }
 
   _renderBaseTemplate() {
@@ -683,11 +687,11 @@ class Cinemaddict {
     switch (this._currentSortType) {
       case _consts__WEBPACK_IMPORTED_MODULE_0__["Sorts"].DATE:
         this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN]
-          .sort((a, b) => a.info.releaseDate > b.info.releaseDate);
+          .sort((a, b) => new Date(a.info.releaseDate) - new Date(b.info.releaseDate));
         break;
       case _consts__WEBPACK_IMPORTED_MODULE_0__["Sorts"].RATING:
         this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN]
-          .sort((a, b) => a.info.rating < b.info.rating);
+          .sort((a, b) => b.info.rating - a.info.rating);
         break;
       default:
         this._films[_consts__WEBPACK_IMPORTED_MODULE_0__["List"].MAIN] = this._filmsUnsort.slice();
@@ -881,6 +885,7 @@ class FilmPopup {
     Object(_render__WEBPACK_IMPORTED_MODULE_1__["renderComponent"])(this._popupForm, this._popupComments);
 
     this._popupInfo.setHandlers();
+    this._popupComments.setHandlers();
   }
 
   _onClosePopupKeydown(evt) {
@@ -1029,12 +1034,13 @@ class AbstractView {
     }
 
     this._element = null;
-    this._newElement = null;
     this._callbacks = {};
   }
 
   getTemplate() {
-    throw new Error(`Отсутствует имплементация абстрактного метода: getTemplate.`);
+    throw new Error(
+        `Отсутствует имплементация абстрактного метода: getTemplate.`
+    );
   }
 
   getElement() {
@@ -1043,17 +1049,6 @@ class AbstractView {
     }
 
     return this._element;
-  }
-
-  updateElement() {
-    this._newElement = Object(_render__WEBPACK_IMPORTED_MODULE_0__["createElement"])(this.getTemplate());
-
-    if (this._element) {
-      Object(_render__WEBPACK_IMPORTED_MODULE_0__["replaceElement"])(this._element, this._newElement);
-    }
-
-    this._element = this._newElement;
-    this._newElement = null;
   }
 
   removeElement() {
@@ -1074,7 +1069,7 @@ class AbstractView {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Statistic; });
-/* harmony import */ var _abstractView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../abstractView */ "./src/view/abstractView.js");
+/* harmony import */ var _smartView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../smartView */ "./src/view/smartView.js");
 
 
 const createFooterStatisticTemplate = (filmAmount) => {
@@ -1083,7 +1078,7 @@ const createFooterStatisticTemplate = (filmAmount) => {
   );
 };
 
-class Statistic extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
+class Statistic extends _smartView__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor(amount = 0) {
     super();
     this._amount = amount;
@@ -1112,7 +1107,7 @@ class Statistic extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Profile; });
-/* harmony import */ var _abstractView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../abstractView */ "./src/view/abstractView.js");
+/* harmony import */ var _smartView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../smartView */ "./src/view/smartView.js");
 
 
 const UserRank = {
@@ -1147,7 +1142,7 @@ const createHeaderProfileTemplate = (watchedFilms) => {
   );
 };
 
-class Profile extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
+class Profile extends _smartView__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor(watchedFilms = 0) {
     super();
     this._watchedFilms = watchedFilms;
@@ -1176,7 +1171,7 @@ class Profile extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FilmsLoading; });
-/* harmony import */ var _abstractView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../abstractView */ "./src/view/abstractView.js");
+/* harmony import */ var _smartView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../smartView */ "./src/view/smartView.js");
 
 
 const createFilmsLoadingTemplate = (filmsStatus) => {
@@ -1189,7 +1184,7 @@ const createFilmsLoadingTemplate = (filmsStatus) => {
   );
 };
 
-class FilmsLoading extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
+class FilmsLoading extends _smartView__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor(filmsStatus = `Loading...`) {
     super();
     this._filmsStatus = filmsStatus;
@@ -1220,10 +1215,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return FilmCard; });
 /* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dayjs */ "./node_modules/dayjs/dayjs.min.js");
 /* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dayjs__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _abstractView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../abstractView */ "./src/view/abstractView.js");
-/* harmony import */ var _consts__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../consts */ "./src/consts.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../utils */ "./src/utils.js");
-/* harmony import */ var _presenter_FilmPopup__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../presenter/FilmPopup */ "./src/presenter/FilmPopup.js");
+/* harmony import */ var _consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../consts */ "./src/consts.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../utils */ "./src/utils.js");
+/* harmony import */ var _presenter_FilmPopup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../presenter/FilmPopup */ "./src/presenter/FilmPopup.js");
+/* harmony import */ var _smartView__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../smartView */ "./src/view/smartView.js");
 
 
 
@@ -1231,7 +1226,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const createFilmCardTemplate = (film) => {
-  const showDescription = (description) => description.length >= _consts__WEBPACK_IMPORTED_MODULE_2__["MAX_DESCRIPTION_LENGTH"] ? `${description.slice(0, _consts__WEBPACK_IMPORTED_MODULE_2__["MAX_DESCRIPTION_LENGTH"])}...` : description;
+  const showDescription = (description) => description.length >= _consts__WEBPACK_IMPORTED_MODULE_1__["MAX_DESCRIPTION_LENGTH"] ? `${description.slice(0, _consts__WEBPACK_IMPORTED_MODULE_1__["MAX_DESCRIPTION_LENGTH"])}...` : description;
   const setActiveClass = (isChecked) => isChecked ? `film-card__controls-item--active` : ``;
 
   return (
@@ -1240,7 +1235,7 @@ const createFilmCardTemplate = (film) => {
       <p class="film-card__rating">${film.rating}</p>
       <p class="film-card__info">
         <span class="film-card__year">${dayjs__WEBPACK_IMPORTED_MODULE_0___default()(film.releaseDate).format(`YYYY`)}</span>
-        <span class="film-card__duration">${Object(_utils__WEBPACK_IMPORTED_MODULE_3__["getFormattedRunTime"])(film.runtime)}</span>
+        <span class="film-card__duration">${Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getFormattedRunTime"])(film.runtime)}</span>
         <span class="film-card__genre">${film.genres[0]}</span>
       </p>
       <img src=${film.poster} alt=${film.title} class="film-card__poster">
@@ -1255,7 +1250,7 @@ const createFilmCardTemplate = (film) => {
   );
 };
 
-class FilmCard extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
+class FilmCard extends _smartView__WEBPACK_IMPORTED_MODULE_4__["default"] {
   constructor(film) {
     super();
     this._film = film;
@@ -1279,7 +1274,7 @@ class FilmCard extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
   }
 
   _setOpenPopupHandlers() {
-    this._popup = new _presenter_FilmPopup__WEBPACK_IMPORTED_MODULE_4__["default"]();
+    this._popup = new _presenter_FilmPopup__WEBPACK_IMPORTED_MODULE_3__["default"]();
 
     this.getElement().querySelector(`.film-card__title`)
       .addEventListener(`click`, this._openPopupHandler);
@@ -1506,24 +1501,24 @@ class MainContainer extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "generateFilters", function() { return generateFilters; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Filter; });
-/* harmony import */ var _abstractView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../abstractView */ "./src/view/abstractView.js");
-/* harmony import */ var _consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../consts */ "./src/consts.js");
+/* harmony import */ var _consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../consts */ "./src/consts.js");
+/* harmony import */ var _smartView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../smartView */ "./src/view/smartView.js");
 
 
 
 const initFilter = {
-  [_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].ALL]: null,
-  [_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].WATCHLIST]: 0,
-  [_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].HISTORY]: 0,
-  [_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].FAVORITES]: 0,
+  [_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].ALL]: null,
+  [_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].WATCHLIST]: 0,
+  [_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].HISTORY]: 0,
+  [_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].FAVORITES]: 0,
 };
 
 const generateFilters = (films) => films.reduce((acc, item) => {
   return {
-    [_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].ALL]: null,
-    [_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].WATCHLIST]: item.isInWatchlist ? ++acc[_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].WATCHLIST] : acc[_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].WATCHLIST],
-    [_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].HISTORY]: item.isWatched ? ++acc[_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].HISTORY] : acc[_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].HISTORY],
-    [_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].FAVORITES]: item.isFavorite ? ++acc[_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].FAVORITES] : acc[_consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].FAVORITES],
+    [_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].ALL]: null,
+    [_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].WATCHLIST]: item.isInWatchlist ? ++acc[_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].WATCHLIST] : acc[_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].WATCHLIST],
+    [_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].HISTORY]: item.isWatched ? ++acc[_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].HISTORY] : acc[_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].HISTORY],
+    [_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].FAVORITES]: item.isFavorite ? ++acc[_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].FAVORITES] : acc[_consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].FAVORITES],
   };
 }, initFilter);
 
@@ -1538,8 +1533,8 @@ const createMainFilterTemplate = (filters) => {
 
   const generateLinks = (navFilters) => navFilters.map((navFilter) => (
     `<a href="#${navFilter.name}"
-      class="main-navigation__item ${navFilter.name === _consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].ALL ? `main-navigation__item--active` : ``}">
-      ${navFilter.name} ${navFilter.name !== _consts__WEBPACK_IMPORTED_MODULE_1__["Filters"].ALL ? `<span class="main-navigation__item-count">${navFilter.amount}</span></a>` : ``}`
+      class="main-navigation__item ${navFilter.name === _consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].ALL ? `main-navigation__item--active` : ``}">
+      ${navFilter.name} ${navFilter.name !== _consts__WEBPACK_IMPORTED_MODULE_0__["Filters"].ALL ? `<span class="main-navigation__item-count">${navFilter.amount}</span></a>` : ``}`
   )).join(``);
 
   return (
@@ -1552,7 +1547,7 @@ const createMainFilterTemplate = (filters) => {
   );
 };
 
-class Filter extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
+class Filter extends _smartView__WEBPACK_IMPORTED_MODULE_1__["default"] {
   constructor(filters = initFilter) {
     super();
     this._filters = filters;
@@ -1656,63 +1651,69 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PopupComments; });
 /* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dayjs */ "./node_modules/dayjs/dayjs.min.js");
 /* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dayjs__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _abstractView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../abstractView */ "./src/view/abstractView.js");
+/* harmony import */ var _smartView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../smartView */ "./src/view/smartView.js");
 
 
 
-const createPopupCommentsTemplate = (comments) => {
-  const markupComments = comments.map((comment) => (
+const Emojis = {
+  SMILE: `smile`,
+  SLEEPING: `sleeping`,
+  PUKE: `puke`,
+  ANGRY: `angry`
+};
+
+const createPopupCommentsTemplate = (oldData, currentData) => {
+  const markupComments = oldData.map((data) => (
     `<li class="film-details__comment">
       <span class="film-details__comment-emoji">
-        <img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji-${comment.emotion}">
+        <img src="./images/emoji/${data.emotion}.png" width="55" height="55" alt="emoji-${data.emotion}">
       </span>
       <div>
-        <p class="film-details__comment-text">${comment.comment}</p>
+        <p class="film-details__comment-text">${data.comment}</p>
         <p class="film-details__comment-info">
-          <span class="film-details__comment-author">${comment.author}</span>
-          <span class="film-details__comment-day">${dayjs__WEBPACK_IMPORTED_MODULE_0___default()(comment.date).format(`YYYY/MM/DD HH:mm`)}</span>
+          <span class="film-details__comment-author">${data.author}</span>
+          <span class="film-details__comment-day">${dayjs__WEBPACK_IMPORTED_MODULE_0___default()(data.date).format(`YYYY/MM/DD HH:mm`)}</span>
           <button class="film-details__comment-delete">Delete</button>
         </p>
       </div>
     </li>`
   )).join(``);
 
+  const markupEmoji = currentData.emoji
+    ? `<img src="images/emoji/${currentData.emoji}.png" width="55" height="55" alt="emoji-${currentData.emoji}">`
+    : ``;
+
+  const isActiveEmoji = (emoji) => currentData.emoji === emoji ? `checked` : ``;
+
+  const markupInputs = Object.values(Emojis).map((emoji) => (
+    `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji}" value="${emoji}" ${isActiveEmoji(emoji)}>
+    <label class="film-details__emoji-label" for="emoji-${emoji}" data-emoji="${emoji}">
+      <img src="./images/emoji/${emoji}.png" width="30" height="30" alt="emoji-${emoji}">
+    </label>`
+  )).join(``);
+
+  const isCommentText = currentData.text ? currentData.text : ``;
+
   return (
     `<div class="film-details__bottom-container">
       <section class="film-details__comments-wrap">
-        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments.length}</span></h3>
+        <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${oldData.length}</span></h3>
 
         <ul class="film-details__comments-list">
           ${markupComments}
         </ul>
 
         <div class="film-details__new-comment">
-          <div class="film-details__add-emoji-label"></div>
+          <div class="film-details__add-emoji-label">
+            ${markupEmoji}
+          </div>
 
           <label class="film-details__comment-label">
-            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+            <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${isCommentText}</textarea>
           </label>
 
           <div class="film-details__emoji-list">
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-            <label class="film-details__emoji-label" for="emoji-smile">
-              <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-            <label class="film-details__emoji-label" for="emoji-sleeping">
-              <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-            <label class="film-details__emoji-label" for="emoji-puke">
-              <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-            </label>
-
-            <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-            <label class="film-details__emoji-label" for="emoji-angry">
-              <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-            </label>
+            ${markupInputs}
           </div>
         </div>
       </section>
@@ -1720,10 +1721,13 @@ const createPopupCommentsTemplate = (comments) => {
   );
 };
 
-class PopupComments extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
+class PopupComments extends _smartView__WEBPACK_IMPORTED_MODULE_1__["default"] {
   constructor(film) {
     super();
     this._film = film;
+    this._currentData = {};
+
+    this._updateComments = this._updateComments.bind(this);
   }
 
   set film(film) {
@@ -1732,7 +1736,35 @@ class PopupComments extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"
   }
 
   getTemplate() {
-    return createPopupCommentsTemplate(this._film.info.comments);
+    return createPopupCommentsTemplate(this._film.info.comments, this._currentData);
+  }
+
+  setHandlers() {
+    this._setChoiceEmoji();
+    this._setTextInputHandler();
+  }
+
+  _updateComments() {
+    this.updateElement();
+    this.setHandlers();
+  }
+
+  _setChoiceEmoji() {
+    this.getElement().querySelector(`.film-details__emoji-list`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const emoji = evt.target.parentElement.dataset.emoji;
+        this._currentData.emoji = emoji;
+        this._updateComments();
+      });
+  }
+
+  _setTextInputHandler() {
+    this.getElement().querySelector(`.film-details__comment-input`)
+      .addEventListener(`input`, (evt) => {
+        const inputText = evt.target.value;
+        this._currentData.text = inputText;
+      });
   }
 }
 
@@ -1779,11 +1811,11 @@ class PopupForm extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return PopupInfo; });
-/* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dayjs */ "./node_modules/dayjs/dayjs.min.js");
-/* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dayjs__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _abstractView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../abstractView */ "./src/view/abstractView.js");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
-/* harmony import */ var _presenter_FilmPopup__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../presenter/FilmPopup */ "./src/presenter/FilmPopup.js");
+/* harmony import */ var _smartView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../smartView */ "./src/view/smartView.js");
+/* harmony import */ var _presenter_FilmPopup__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../presenter/FilmPopup */ "./src/presenter/FilmPopup.js");
+/* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! dayjs */ "./node_modules/dayjs/dayjs.min.js");
+/* harmony import */ var dayjs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(dayjs__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../utils */ "./src/utils.js");
 
 
 
@@ -1831,11 +1863,11 @@ const createPopupInfoTemplate = (film) => {
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Release Date</td>
-              <td class="film-details__cell">${dayjs__WEBPACK_IMPORTED_MODULE_0___default()(film.releaseDate).format(`DD MMM YYYY`)}</td>
+              <td class="film-details__cell">${dayjs__WEBPACK_IMPORTED_MODULE_2___default()(film.releaseDate).format(`DD MMM YYYY`)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Runtime</td>
-              <td class="film-details__cell">${Object(_utils__WEBPACK_IMPORTED_MODULE_2__["getFormattedRunTime"])(film.runtime)}</td>
+              <td class="film-details__cell">${Object(_utils__WEBPACK_IMPORTED_MODULE_3__["getFormattedRunTime"])(film.runtime)}</td>
             </tr>
             <tr class="film-details__row">
               <td class="film-details__term">Country</td>
@@ -1867,12 +1899,12 @@ const createPopupInfoTemplate = (film) => {
   );
 };
 
-class PopupInfo extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
+class PopupInfo extends _smartView__WEBPACK_IMPORTED_MODULE_0__["default"] {
   constructor(film, updateCard) {
     super();
     this._film = film;
     this._updateCard = updateCard;
-    this._popup = new _presenter_FilmPopup__WEBPACK_IMPORTED_MODULE_3__["default"]();
+    this._popup = new _presenter_FilmPopup__WEBPACK_IMPORTED_MODULE_1__["default"]();
   }
 
   set film(film) {
@@ -1927,6 +1959,47 @@ class PopupInfo extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
 
 /***/ }),
 
+/***/ "./src/view/smartView.js":
+/*!*******************************!*\
+  !*** ./src/view/smartView.js ***!
+  \*******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return SmartView; });
+/* harmony import */ var _render__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../render */ "./src/render.js");
+/* harmony import */ var _abstractView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./abstractView */ "./src/view/abstractView.js");
+
+
+
+class SmartView extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
+  constructor() {
+    super();
+
+    this._newElement = null;
+  }
+
+  updateElement() {
+    this._newElement = Object(_render__WEBPACK_IMPORTED_MODULE_0__["createElement"])(this.getTemplate());
+
+    if (this._element) {
+      Object(_render__WEBPACK_IMPORTED_MODULE_0__["replaceElement"])(this._element, this._newElement);
+    }
+
+    this._element = this._newElement;
+    this._newElement = null;
+  }
+
+  // restoreHandlers() {
+  //   throw new Error(`Abstract method not implemented: resetHandlers`);
+  // }
+}
+
+
+/***/ }),
+
 /***/ "./src/view/sort.js":
 /*!**************************!*\
   !*** ./src/view/sort.js ***!
@@ -1937,15 +2010,15 @@ class PopupInfo extends _abstractView__WEBPACK_IMPORTED_MODULE_1__["default"] {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Sort; });
-/* harmony import */ var _abstractView__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./abstractView */ "./src/view/abstractView.js");
-/* harmony import */ var _consts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../consts */ "./src/consts.js");
+/* harmony import */ var _consts__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../consts */ "./src/consts.js");
+/* harmony import */ var _smartView__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./smartView */ "./src/view/smartView.js");
 
 
 
-const createMainSortTemplate = (CurrentSortType) => {
-  const setActiveClass = (type) => CurrentSortType === type ? `sort__button--active` : ``;
+const createMainSortTemplate = (currentSortType) => {
+  const setActiveClass = (type) => currentSortType === type ? `sort__button--active` : ``;
 
-  const generateLinks = () => Object.values(_consts__WEBPACK_IMPORTED_MODULE_1__["Sorts"]).map((sortType) => (
+  const generateLinks = () => Object.values(_consts__WEBPACK_IMPORTED_MODULE_0__["Sorts"]).map((sortType) => (
     `<li><a href="#" class="sort__button ${setActiveClass(sortType)}" data-sort-type="${sortType}">${sortType}</a></li>`
   )).join(``);
 
@@ -1956,8 +2029,8 @@ const createMainSortTemplate = (CurrentSortType) => {
   );
 };
 
-class Sort extends _abstractView__WEBPACK_IMPORTED_MODULE_0__["default"] {
-  constructor(appInstance, sortType = _consts__WEBPACK_IMPORTED_MODULE_1__["Sorts"].DEFAULT) {
+class Sort extends _smartView__WEBPACK_IMPORTED_MODULE_1__["default"] {
+  constructor(appInstance, sortType = _consts__WEBPACK_IMPORTED_MODULE_0__["Sorts"].DEFAULT) {
     super();
     this._appInstance = appInstance;
     this._sortType = sortType;
