@@ -1,8 +1,7 @@
-import dayjs from "dayjs";
-import AbstractView from "../abstractView";
-import {getFormattedRunTime} from "../../utils";
-import FilmPopup from "../../presenter/FilmPopup";
 import SmartView from "../smartView";
+import FilmPopup from "../../presenter/FilmPopup";
+import dayjs from "dayjs";
+import {getFormattedRunTime} from "../../utils";
 
 const createPopupInfoTemplate = (film) => {
   const getIsActive = (isChecked) => isChecked ? `checked` : ``;

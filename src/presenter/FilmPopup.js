@@ -74,6 +74,7 @@ export default class FilmPopup {
     renderComponent(this._popupForm, this._popupComments);
 
     this._popupInfo.setHandlers();
+    this._popupComments.setHandlers();
   }
 
   _onClosePopupKeydown(evt) {
