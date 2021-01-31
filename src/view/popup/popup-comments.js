@@ -1,3 +1,4 @@
+import {nanoid} from "nanoid";
 import dayjs from "dayjs";
 import SmartView from "../smartView";
 
@@ -89,6 +90,7 @@ export default class PopupComments extends SmartView {
   setHandlers() {
     this._setChoiceEmoji();
     this._setTextInputHandler();
+    this._setSendCommentHandler();
     this._setDeleteCommentHandler();
   }
 
@@ -118,6 +120,25 @@ export default class PopupComments extends SmartView {
       .addEventListener(`input`, (evt) => {
         const inputText = evt.target.value;
         this._currentData.comment = inputText;
+      });
+  }
+
+  _setSendCommentHandler() {
+    this.getElement().querySelector(`.film-details__comment-input`)
+      .addEventListener(`keydown`, (evt) => {
+        if (evt.key === `Enter`) {
+          evt.preventDefault();
+
+          this._film.comments.push({
+            id: nanoid(),
+            author: `Some author`,
+            comment: this._currentData.comment,
+            date: new Date(),
+            emotion: this._currentData.emotion
+          });
+
+          this._updateComments();
+        }
       });
   }
 
