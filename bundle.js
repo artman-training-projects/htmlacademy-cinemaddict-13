@@ -276,8 +276,7 @@ const Fraction = {
 };
 
 const films = (() => {
-  // const random = Math.random();
-  const random = 1;
+  const random = Math.random();
 
   if (random > Fraction.FILL) {
     return new Array(Object(_utils__WEBPACK_IMPORTED_MODULE_1__["getRandomNumber"])(20, 15)).fill(``).map(_mock_films__WEBPACK_IMPORTED_MODULE_0__["getRandomizedFilm"]);
@@ -291,7 +290,7 @@ const films = (() => {
 })();
 
 const getFilmsFromServer = () => new Promise((resolve, reject) => {
-  setTimeout(() => films ? resolve(films) : reject(new Error(`Упс! Загрузка не удалась`)), 0);
+  setTimeout(() => films ? resolve(films) : reject(new Error(`Упс! Загрузка не удалась`)), 2000);
 });
 
 
