@@ -67,7 +67,7 @@ export default class FilmPopup {
   _renderPopup() {
     this._popupForm = new PopupForm();
     this._popupInfo = new PopupInfo(this._film, this._updateCard);
-    this._popupComments = new PopupComments(this._film);
+    this._popupComments = new PopupComments(this._film, this._updateCard);
 
     renderComponent(this._container, this._popupForm);
     renderComponent(this._popupForm, this._popupInfo);
