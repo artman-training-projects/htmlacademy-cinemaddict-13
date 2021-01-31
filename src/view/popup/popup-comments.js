@@ -1,5 +1,7 @@
 import {nanoid} from "nanoid";
 import dayjs from "dayjs";
+
+import {Keys, TagNames} from "../../consts";
 import SmartView from "../smartView";
 
 const Emojis = {
@@ -84,7 +86,7 @@ export default class PopupComments extends SmartView {
   }
 
   getTemplate() {
-    return createPopupCommentsTemplate(this._film.info.comments, this._currentData);
+    return createPopupCommentsTemplate(this._film.comments, this._currentData);
   }
 
   setHandlers() {
@@ -105,7 +107,7 @@ export default class PopupComments extends SmartView {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        if (evt.target.tagName !== `IMG`) {
+        if (evt.target.tagName !== TagNames.IMG) {
           return;
         }
 
@@ -126,7 +128,7 @@ export default class PopupComments extends SmartView {
   _setSendCommentHandler() {
     this.getElement().querySelector(`.film-details__comment-input`)
       .addEventListener(`keydown`, (evt) => {
-        if (evt.key === `Enter`) {
+        if (evt.key === Keys.ENTER) {
           evt.preventDefault();
 
           this._film.comments.push({
@@ -147,7 +149,7 @@ export default class PopupComments extends SmartView {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        if (evt.target.tagName !== `BUTTON`) {
+        if (evt.target.tagName !== TagNames.BUTTON) {
           return;
         }
 

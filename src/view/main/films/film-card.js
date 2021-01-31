@@ -1,8 +1,9 @@
 import dayjs from "dayjs";
+
 import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
 import {getFormattedRunTime} from "../../../utils";
-import FilmPopup from "../../../presenter/FilmPopup";
 import SmartView from "../../smartView";
+import FilmPopup from "../../../presenter/FilmPopup";
 
 const createFilmCardTemplate = (film) => {
   const showDescription = (description) => description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
@@ -39,7 +40,7 @@ export default class FilmCard extends SmartView {
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._film.info);
+    return createFilmCardTemplate(this._film);
   }
 
   setHandlers() {
@@ -69,21 +70,21 @@ export default class FilmCard extends SmartView {
     this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._film.isInWatchlist = !this._film.isInWatchlist;
+        this._film.watchlist = !this._film.watchlist;
         this._updateCard();
       });
 
     this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._film.isWatched = !this._film.isWatched;
+        this._film.watched = !this._film.watched;
         this._updateCard();
       });
 
     this.getElement().querySelector(`.film-card__controls-item--favorite`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._film.isFavorite = !this._film.isFavorite;
+        this._film.favorite = !this._film.favorite;
         this._updateCard();
       });
   }

@@ -11,9 +11,9 @@ const initFilter = {
 export const generateFilters = (films) => films.reduce((acc, item) => {
   return {
     [Filters.ALL]: null,
-    [Filters.WATCHLIST]: item.isInWatchlist ? ++acc[Filters.WATCHLIST] : acc[Filters.WATCHLIST],
-    [Filters.HISTORY]: item.isWatched ? ++acc[Filters.HISTORY] : acc[Filters.HISTORY],
-    [Filters.FAVORITES]: item.isFavorite ? ++acc[Filters.FAVORITES] : acc[Filters.FAVORITES],
+    [Filters.WATCHLIST]: item.watchlist ? ++acc[Filters.WATCHLIST] : acc[Filters.WATCHLIST],
+    [Filters.HISTORY]: item.watched ? ++acc[Filters.HISTORY] : acc[Filters.HISTORY],
+    [Filters.FAVORITES]: item.favorite ? ++acc[Filters.FAVORITES] : acc[Filters.FAVORITES],
   };
 }, initFilter);
 

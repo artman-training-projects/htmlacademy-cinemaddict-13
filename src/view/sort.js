@@ -1,4 +1,4 @@
-import {Sorts} from "../consts";
+import {Sorts, TagNames} from "../consts";
 import SmartView from "./smartView";
 
 const createMainSortTemplate = (currentSortType) => {
@@ -38,7 +38,7 @@ export default class Sort extends SmartView {
   }
 
   _sortTypeChangeHandler(evt) {
-    if (evt.target.tagName !== `A`) {
+    if (evt.target.tagName !== TagNames.A) {
       return;
     }
 

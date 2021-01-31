@@ -1,5 +1,6 @@
 import {Keys} from "../consts";
 import {removeComponent, renderComponent} from "../render";
+
 import PopupForm from "../view/popup/popup-form";
 import PopupInfo from "../view/popup/popup-info";
 import PopupComments from "../view/popup/popup-comments";
