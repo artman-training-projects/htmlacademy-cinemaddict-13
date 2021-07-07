@@ -25,7 +25,14 @@ export const Sorts = {
 export const MAX_DESCRIPTION_LENGTH = 139;
 
 export const Keys = {
-  ESCAPE: `Escape`
+  ESCAPE: `Escape`,
+  ENTER: `Enter`
+};
+
+export const TagNames = {
+  A: `A`,
+  BUTTON: `BUTTON`,
+  IMG: `IMG`
 };
 
 export const Message = {

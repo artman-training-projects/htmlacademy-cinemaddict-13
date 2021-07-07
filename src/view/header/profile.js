@@ -1,4 +1,4 @@
-import AbstractView from "../abstractView";
+import SmartView from "../smartView";
 
 const UserRank = {
   ZERO: ``,
@@ -32,7 +32,7 @@ const createHeaderProfileTemplate = (watchedFilms) => {
   );
 };
 
-export default class Profile extends AbstractView {
+export default class Profile extends SmartView {
   constructor(watchedFilms = 0) {
     super();
     this._watchedFilms = watchedFilms;

@@ -1,8 +1,8 @@
-import AbstractView from "./abstractView";
-import {Sorts} from "../consts";
+import {Sorts, TagNames} from "../consts";
+import SmartView from "./smartView";
 
-const createMainSortTemplate = (CurrentSortType) => {
-  const setActiveClass = (type) => CurrentSortType === type ? `sort__button--active` : ``;
+const createMainSortTemplate = (currentSortType) => {
+  const setActiveClass = (type) => currentSortType === type ? `sort__button--active` : ``;
 
   const generateLinks = () => Object.values(Sorts).map((sortType) => (
     `<li><a href="#" class="sort__button ${setActiveClass(sortType)}" data-sort-type="${sortType}">${sortType}</a></li>`
@@ -15,7 +15,7 @@ const createMainSortTemplate = (CurrentSortType) => {
   );
 };
 
-export default class Sort extends AbstractView {
+export default class Sort extends SmartView {
   constructor(appInstance, sortType = Sorts.DEFAULT) {
     super();
     this._appInstance = appInstance;
@@ -38,7 +38,7 @@ export default class Sort extends AbstractView {
   }
 
   _sortTypeChangeHandler(evt) {
-    if (evt.target.tagName !== `A`) {
+    if (evt.target.tagName !== TagNames.A) {
       return;
     }
 

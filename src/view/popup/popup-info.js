@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
-import AbstractView from "../abstractView";
+
 import {getFormattedRunTime} from "../../utils";
+import SmartView from "../smartView";
 import FilmPopup from "../../presenter/FilmPopup";
 
 const createPopupInfoTemplate = (film) => {
@@ -81,7 +82,7 @@ const createPopupInfoTemplate = (film) => {
   );
 };
 
-export default class PopupInfo extends AbstractView {
+export default class PopupInfo extends SmartView {
   constructor(film, updateCard) {
     super();
     this._film = film;
@@ -95,7 +96,7 @@ export default class PopupInfo extends AbstractView {
   }
 
   getTemplate() {
-    return createPopupInfoTemplate(this._film.info);
+    return createPopupInfoTemplate(this._film);
   }
 
   setHandlers() {
@@ -118,21 +119,21 @@ export default class PopupInfo extends AbstractView {
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._film.isInWatchlist = !this._film.isInWatchlist;
+        this._film.watchlist = !this._film.watchlist;
         this._updateInfo();
       });
 
     this.getElement().querySelector(`.film-details__control-label--watched`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._film.isWatched = !this._film.isWatched;
+        this._film.watched = !this._film.watched;
         this._updateInfo();
       });
 
     this.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._film.isFavorite = !this._film.isFavorite;
+        this._film.favorite = !this._film.favorite;
         this._updateInfo();
       });
   }

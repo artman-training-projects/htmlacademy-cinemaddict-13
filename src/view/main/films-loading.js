@@ -1,4 +1,4 @@
-import AbstractView from "../abstractView";
+import SmartView from "../smartView";
 
 const createFilmsLoadingTemplate = (filmsStatus) => {
   return (
@@ -10,7 +10,7 @@ const createFilmsLoadingTemplate = (filmsStatus) => {
   );
 };
 
-export default class FilmsLoading extends AbstractView {
+export default class FilmsLoading extends SmartView {
   constructor(filmsStatus = `Loading...`) {
     super();
     this._filmsStatus = filmsStatus;

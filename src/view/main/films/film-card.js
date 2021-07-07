@@ -1,7 +1,8 @@
 import dayjs from "dayjs";
-import AbstractView from "../../abstractView";
+
 import {MAX_DESCRIPTION_LENGTH} from "../../../consts";
 import {getFormattedRunTime} from "../../../utils";
+import SmartView from "../../smartView";
 import FilmPopup from "../../../presenter/FilmPopup";
 
 const createFilmCardTemplate = (film) => {
@@ -29,7 +30,7 @@ const createFilmCardTemplate = (film) => {
   );
 };
 
-export default class FilmCard extends AbstractView {
+export default class FilmCard extends SmartView {
   constructor(film) {
     super();
     this._film = film;
@@ -39,7 +40,7 @@ export default class FilmCard extends AbstractView {
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._film.info);
+    return createFilmCardTemplate(this._film);
   }
 
   setHandlers() {
@@ -69,21 +70,21 @@ export default class FilmCard extends AbstractView {
     this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._film.isInWatchlist = !this._film.isInWatchlist;
+        this._film.watchlist = !this._film.watchlist;
         this._updateCard();
       });
 
     this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._film.isWatched = !this._film.isWatched;
+        this._film.watched = !this._film.watched;
         this._updateCard();
       });
 
     this.getElement().querySelector(`.film-card__controls-item--favorite`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
-        this._film.isFavorite = !this._film.isFavorite;
+        this._film.favorite = !this._film.favorite;
         this._updateCard();
       });
   }
