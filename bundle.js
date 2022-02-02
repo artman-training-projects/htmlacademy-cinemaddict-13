@@ -125,13 +125,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _url_alphabet_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./url-alphabet/index.js */ "./node_modules/nanoid/url-alphabet/index.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "urlAlphabet", function() { return _url_alphabet_index_js__WEBPACK_IMPORTED_MODULE_0__["urlAlphabet"]; });
 
-// This file replaces `index.js` in bundlers like webpack or Rollup,
-// according to `browser` config in `package.json`.
-
-
 
 if (true) {
-  // All bundlers will remove this block in the production bundle.
   if (
     typeof navigator !== 'undefined' &&
     navigator.product === 'ReactNative' &&
@@ -141,8 +136,7 @@ if (true) {
       'React Native does not have a built-in secure random generator. ' +
         'If you don’t need unpredictable IDs use `nanoid/non-secure`. ' +
         'For secure IDs, import `react-native-get-random-values` ' +
-        'before Nano ID. If you use Expo, install `expo-random` ' +
-        'and use `nanoid/async`.'
+        'before Nano ID.'
     )
   }
   if (typeof msCrypto !== 'undefined' && typeof crypto === 'undefined') {
@@ -158,68 +152,31 @@ if (true) {
     )
   }
 }
-
 let random = bytes => crypto.getRandomValues(new Uint8Array(bytes))
-
 let customRandom = (alphabet, size, getRandom) => {
-  // First, a bitmask is necessary to generate the ID. The bitmask makes bytes
-  // values closer to the alphabet size. The bitmask calculates the closest
-  // `2^31 - 1` number, which exceeds the alphabet size.
-  // For example, the bitmask for the alphabet size 30 is 31 (00011111).
-  // `Math.clz32` is not used, because it is not available in browsers.
   let mask = (2 << (Math.log(alphabet.length - 1) / Math.LN2)) - 1
-  // Though, the bitmask solution is not perfect since the bytes exceeding
-  // the alphabet size are refused. Therefore, to reliably generate the ID,
-  // the random bytes redundancy has to be satisfied.
-
-  // Note: every hardware random generator call is performance expensive,
-  // because the system call for entropy collection takes a lot of time.
-  // So, to avoid additional system calls, extra bytes are requested in advance.
-
-  // Next, a step determines how many random bytes to generate.
-  // The number of random bytes gets decided upon the ID size, mask,
-  // alphabet size, and magic number 1.6 (using 1.6 peaks at performance
-  // according to benchmarks).
-
-  // `-~f => Math.ceil(f)` if f is a float
-  // `-~i => i + 1` if i is an integer
   let step = -~((1.6 * mask * size) / alphabet.length)
-
   return () => {
     let id = ''
     while (true) {
       let bytes = getRandom(step)
-      // A compact alternative for `for (var i = 0; i < step; i++)`.
       let j = step
       while (j--) {
-        // Adding `|| ''` refuses a random byte that exceeds the alphabet size.
         id += alphabet[bytes[j] & mask] || ''
-        // `id.length + 1 === size` is a more compact option.
-        if (id.length === +size) return id
+        if (id.length === size) return id
       }
     }
   }
 }
-
 let customAlphabet = (alphabet, size) => customRandom(alphabet, size, random)
-
 let nanoid = (size = 21) => {
   let id = ''
   let bytes = crypto.getRandomValues(new Uint8Array(size))
-
-  // A compact alternative for `for (var i = 0; i < step; i++)`.
   while (size--) {
-    // It is incorrect to use bytes exceeding the alphabet size.
-    // The following mask reduces the random byte in the 0-255 value
-    // range to the 0-63 value range. Therefore, adding hacks, such
-    // as empty string fallback or magic numbers, is unneccessary because
-    // the bitmask trims bytes down to the alphabet size.
     let byte = bytes[size] & 63
     if (byte < 36) {
-      // `0-9a-z`
       id += byte.toString(36)
     } else if (byte < 62) {
-      // `A-Z`
       id += (byte - 26).toString(36).toUpperCase()
     } else if (byte < 63) {
       id += '_'
@@ -229,7 +186,6 @@ let nanoid = (size = 21) => {
   }
   return id
 }
-
 
 
 
@@ -245,11 +201,8 @@ let nanoid = (size = 21) => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "urlAlphabet", function() { return urlAlphabet; });
-// This alphabet uses `A-Za-z0-9_-` symbols. The genetic algorithm helped
-// optimize the gzip compression for this alphabet.
 let urlAlphabet =
-  'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW'
-
+  'useandom-26T198340PX75pxJACKVERYMINDBUSHWOLF_GQZbfghjklqvwyzrict'
 
 
 
