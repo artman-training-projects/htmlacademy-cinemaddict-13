@@ -1,5 +1,6 @@
 import {Keys} from "../consts";
 import {removeComponent, renderComponent} from "../render";
+
 import PopupForm from "../view/popup/popup-form";
 import PopupInfo from "../view/popup/popup-info";
 import PopupComments from "../view/popup/popup-comments";
@@ -67,13 +68,14 @@ export default class FilmPopup {
   _renderPopup() {
     this._popupForm = new PopupForm();
     this._popupInfo = new PopupInfo(this._film, this._updateCard);
-    this._popupComments = new PopupComments(this._film);
+    this._popupComments = new PopupComments(this._film, this._updateCard);
 
     renderComponent(this._container, this._popupForm);
     renderComponent(this._popupForm, this._popupInfo);
     renderComponent(this._popupForm, this._popupComments);
 
     this._popupInfo.setHandlers();
+    this._popupComments.setHandlers();
   }
 
   _onClosePopupKeydown(evt) {

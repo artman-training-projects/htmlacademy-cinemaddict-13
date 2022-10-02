@@ -1,4 +1,4 @@
-import AbstractView from "../abstractView";
+import SmartView from "../smartView";
 
 const createFooterStatisticTemplate = (filmAmount) => {
   return (
@@ -6,7 +6,7 @@ const createFooterStatisticTemplate = (filmAmount) => {
   );
 };
 
-export default class Statistic extends AbstractView {
+export default class Statistic extends SmartView {
   constructor(amount = 0) {
     super();
     this._amount = amount;

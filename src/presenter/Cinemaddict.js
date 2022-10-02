@@ -1,7 +1,6 @@
 import {List, Message, ShownFilms, Sorts} from "../consts";
-import {getFilmsFromServer} from "../api/api";
-import Film from "../api/film";
 import {removeComponent, renderComponent} from "../render";
+import {getFilmsFromServer} from "../api/api";
 
 import FilmList from "./FilmList";
 import Profile from "../view/header/profile";
@@ -44,7 +43,7 @@ export default class Cinemaddict {
     getFilmsFromServer()
     .then((films) => {
       if (films.length) {
-        this._films[List.MAIN] = films.slice().map((film) => new Film(film));
+        this._films[List.MAIN] = films.slice();
         this._filmsUnsort = this._films[List.MAIN].slice();
 
         this._getTopRatedFilms();
@@ -63,12 +62,12 @@ export default class Cinemaddict {
 
   _getTopRatedFilms() {
     this._films[List.TOP_RATED] = this._films[List.MAIN].slice()
-      .sort((a, b) => a.rating < b.rating).slice(0, ShownFilms.EXTRA);
+      .sort((a, b) => b.rating - a.rating).slice(0, ShownFilms.EXTRA);
   }
 
   _getMostCommentedFilms() {
     this._films[List.MOST_COMMENTED] = this._films[List.MAIN].slice()
-      .sort((a, b) => a.comments.length < b.comments.length).slice(0, ShownFilms.EXTRA);
+      .sort((a, b) => b.comments.length - a.comments.length).slice(0, ShownFilms.EXTRA);
   }
 
   _renderBaseTemplate() {
@@ -88,7 +87,7 @@ export default class Cinemaddict {
   }
 
   _renderProfile() {
-    const watchedFilms = this._films[List.MAIN].filter((film) => film.isWatched).length;
+    const watchedFilms = this._films[List.MAIN].filter((film) => film.watched).length;
     this._profile.watchedFilms = watchedFilms;
     renderComponent(this._entryNodes.HEADER, this._profile);
   }
@@ -115,11 +114,11 @@ export default class Cinemaddict {
     switch (this._currentSortType) {
       case Sorts.DATE:
         this._films[List.MAIN]
-          .sort((a, b) => a.info.releaseDate > b.info.releaseDate);
+          .sort((a, b) => new Date(a.releaseDate) - new Date(b.releaseDate));
         break;
       case Sorts.RATING:
         this._films[List.MAIN]
-          .sort((a, b) => a.info.rating < b.info.rating);
+          .sort((a, b) => b.rating - a.rating);
         break;
       default:
         this._films[List.MAIN] = this._filmsUnsort.slice();
